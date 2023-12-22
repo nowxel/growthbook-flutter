@@ -65,6 +65,26 @@ const String gbTestCases = r'''
     },
     false
   ],
+  [
+      "nested value is null",
+      {
+        "address.state": "CA"
+      },
+      {
+        "address": null
+      },
+      false
+    ],
+    [
+      "nested value is integer",
+      {
+        "address.state": "CA"
+      },
+      {
+        "address": 123
+      },
+      false
+    ],
         [
           "$not     - fail",
           {
@@ -851,6 +871,26 @@ const String gbTestCases = r'''
           false
         ],
         [
+      "$size empty - pass",
+      {
+        "tags": { "$size": 0 }
+      },
+      {
+        "tags": []
+      },
+      true
+    ],
+    [
+      "$size empty - fail",
+      {
+        "tags": { "$size": 0 }
+      },
+      {
+        "tags": [10]
+      },
+      false
+    ],
+        [
           "$size     number - pass",
           {
             "tags": {
@@ -961,6 +1001,66 @@ const String gbTestCases = r'''
           },
           false
         ],
+         [
+      "$elemMatch contains - pass",
+      {
+        "tags": {
+          "$elemMatch": {
+            "$eq": "bar"
+          }
+        }
+      },
+      {
+        "tags": ["foo", "bar", "baz"]
+      },
+      true
+    ],
+    [
+      "$elemMatch contains - false",
+      {
+        "tags": {
+          "$elemMatch": {
+            "$eq": "bar"
+          }
+        }
+      },
+      {
+        "tags": ["foo", "baz"]
+      },
+      false
+    ],
+    [
+      "$elemMatch not contains - pass",
+      {
+        "tags": {
+          "$not": {
+            "$elemMatch": {
+              "$eq": "bar"
+            }
+          }
+        }
+      },
+      {
+        "tags": ["foo", "baz"]
+      },
+      true
+    ],
+    [
+      "$elemMatch not contains - fail",
+      {
+        "tags": {
+          "$not": {
+            "$elemMatch": {
+              "$eq": "bar"
+            }
+          }
+        }
+      },
+      {
+        "tags": ["foo", "bar", "baz"]
+      },
+      false
+    ],
         [
           "$elemMatch     nested - pass",
           {
@@ -1927,6 +2027,7 @@ const String gbTestCases = r'''
               "value": "c",
               "variationId": 2,
               "inExperiment": true,
+              "hashUsed": true,
               "hashAttribute": "id",
               "hashValue": "123"
             },
@@ -1970,6 +2071,7 @@ const String gbTestCases = r'''
               "value": "a",
               "variationId": 0,
               "inExperiment": true,
+              "hashUsed": true,
               "hashAttribute": "id",
               "hashValue": "456"
             },
@@ -2013,6 +2115,7 @@ const String gbTestCases = r'''
               "value": "b",
               "variationId": 1,
               "inExperiment": true,
+              "hashUsed": true,
               "hashAttribute": "id",
               "hashValue": "fds"
             },
@@ -2082,6 +2185,7 @@ const String gbTestCases = r'''
               "value": false,
               "variationId": 1,
               "inExperiment": true,
+              "hashUsed": true,
               "hashAttribute": "anonId",
               "hashValue": "123"
             }
@@ -2279,6 +2383,7 @@ const String gbTestCases = r'''
             "source": "force"
           }
         ],
+       
         [
           "skip experiment on missing hashAttribute",
           {
@@ -2312,6 +2417,47 @@ const String gbTestCases = r'''
             "off": false,
             "source": "force"
           }
+           ],
+    [
+      "include experiments when forced",
+      {
+        "attributes": { "id": "123" },
+        "forcedVariations": {
+          "feature": 1
+        },
+        "features": {
+          "feature": {
+            "defaultValue": 0,
+            "rules": [
+              {
+                "variations": [0, 1, 2, 3]
+              },
+              {
+                "force": 3
+              }
+            ]
+          }
+        }
+      },
+      "feature",
+      {
+        "value": 1,
+        "on": true,
+        "off": false,
+        "source": "experiment",
+        "experiment": {
+          "key": "feature",
+          "variations": [0, 1, 2, 3]
+        },
+        "experimentResult": {
+          "value": 1,
+          "variationId": 1,
+          "inExperiment": true,
+          "hashUsed": false,
+          "hashAttribute": "id",
+          "hashValue": "123"
+        }
+      }
         ]
       ],
       "run": [
@@ -2330,6 +2476,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2347,6 +2494,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2364,6 +2512,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2381,6 +2530,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2398,6 +2548,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2415,6 +2566,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2432,6 +2584,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2449,6 +2602,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2466,6 +2620,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2487,6 +2642,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2508,6 +2664,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2529,6 +2686,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2550,6 +2708,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2571,6 +2730,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2592,6 +2752,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2613,6 +2774,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2634,6 +2796,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2655,6 +2818,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2673,6 +2837,7 @@ const String gbTestCases = r'''
             "coverage": 0.4
           },
           0,
+          false,
           false
         ],
         [
@@ -2691,6 +2856,7 @@ const String gbTestCases = r'''
             "coverage": 0.4
           },
           0,
+          true,
           true
         ],
         [
@@ -2709,6 +2875,7 @@ const String gbTestCases = r'''
             "coverage": 0.4
           },
           0,
+          true,
           true
         ],
         [
@@ -2727,6 +2894,7 @@ const String gbTestCases = r'''
             "coverage": 0.4
           },
           0,
+          false,
           false
         ],
         [
@@ -2745,6 +2913,7 @@ const String gbTestCases = r'''
             "coverage": 0.4
           },
           1,
+          true,
           true
         ],
         [
@@ -2763,6 +2932,7 @@ const String gbTestCases = r'''
             "coverage": 0.4
           },
           0,
+          false,
           false
         ],
         [
@@ -2781,6 +2951,7 @@ const String gbTestCases = r'''
             "coverage": 0.4
           },
           0,
+          true,
           true
         ],
         [
@@ -2799,6 +2970,7 @@ const String gbTestCases = r'''
             "coverage": 0.4
           },
           1,
+          true,
           true
         ],
         [
@@ -2817,6 +2989,7 @@ const String gbTestCases = r'''
             "coverage": 0.4
           },
           0,
+          false,
           false
         ],
         [
@@ -2835,6 +3008,7 @@ const String gbTestCases = r'''
             ]
           },
           2,
+          true,
           true
         ],
         [
@@ -2853,6 +3027,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2871,6 +3046,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2889,6 +3065,7 @@ const String gbTestCases = r'''
             ]
           },
           2,
+          true,
           true
         ],
         [
@@ -2907,6 +3084,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2925,6 +3103,7 @@ const String gbTestCases = r'''
             ]
           },
           2,
+          true,
           true
         ],
         [
@@ -2943,6 +3122,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2961,6 +3141,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -2979,6 +3160,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -2996,6 +3178,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -3013,6 +3196,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          true,
           true
         ],
         [
@@ -3030,6 +3214,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          false,
           false
         ],
         [
@@ -3047,6 +3232,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          false,
           false
         ],
         [
@@ -3062,6 +3248,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          false,
           false
         ],
         [
@@ -3078,6 +3265,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          false,
           false
         ],
         [
@@ -3096,6 +3284,7 @@ const String gbTestCases = r'''
             "force": -8
           },
           0,
+          false,
           false
         ],
         [
@@ -3114,6 +3303,7 @@ const String gbTestCases = r'''
             "force": 25
           },
           0,
+          false,
           false
         ],
         [
@@ -3135,6 +3325,7 @@ const String gbTestCases = r'''
             }
           },
           1,
+          true,
           true
         ],
         [
@@ -3156,6 +3347,7 @@ const String gbTestCases = r'''
             }
           },
           0,
+          false,
           false
         ],
         [
@@ -3175,6 +3367,7 @@ const String gbTestCases = r'''
             "hashAttribute": "companyId"
           },
           1,
+          true,
           true
         ],
         [
@@ -3193,6 +3386,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          false,
           false
         ],
         [
@@ -3211,6 +3405,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -3229,6 +3424,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          false,
           false
         ],
         [
@@ -3248,6 +3444,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          false,
           false
         ],
         [
@@ -3274,6 +3471,7 @@ const String gbTestCases = r'''
             "color": "green",
             "size": "large"
           },
+          true,
           true
         ],
         [
@@ -3294,6 +3492,7 @@ const String gbTestCases = r'''
       ]
     },
     0,
+    true,
     false
   ],
         [
@@ -3312,6 +3511,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          false,
           false
         ],
         [
@@ -3333,6 +3533,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           false
         ],
         [
@@ -3352,6 +3553,7 @@ const String gbTestCases = r'''
       "force": 1
     },
     1,
+    true,
     false
   ],
         [
@@ -3374,6 +3576,7 @@ const String gbTestCases = r'''
             ]
           },
           1,
+          true,
           true
         ],
         [
@@ -3396,6 +3599,7 @@ const String gbTestCases = r'''
             ]
           },
           0,
+          false,
           false
         ]
       ],

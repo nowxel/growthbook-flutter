@@ -145,8 +145,9 @@ class GBExperimentEvaluator {
   static GBExperimentResult _getExperimentResult({
     required GBContext gbContext,
     required GBExperiment experiment,
-    int variationIndex = 0,
-    bool inExperiment = false,
+    int variationIndex = -1,
+    bool hashUsed = false,
+    bool inExperiment = true,
   }) {
     var targetVariationIndex = variationIndex;
 
@@ -155,6 +156,7 @@ class GBExperimentEvaluator {
         targetVariationIndex >= experiment.variations.length) {
       // Set to 0
       targetVariationIndex = 0;
+      inExperiment = false;
     }
 
     dynamic targetValue = 0;
@@ -173,6 +175,7 @@ class GBExperimentEvaluator {
       inExperiment: inExperiment,
       variationID: targetVariationIndex,
       value: targetValue,
+      hashUsed: hashUsed,
       hasAttributes: hashAttribute,
       hashValue: hashValue,
     );

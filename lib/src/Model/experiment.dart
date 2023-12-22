@@ -58,6 +58,7 @@ class GBExperimentResult {
     this.inExperiment,
     this.variationID,
     this.value,
+    this.hashUsed,
     this.hasAttributes,
     this.hashValue,
   });
@@ -70,6 +71,10 @@ class GBExperimentResult {
 
   /// The array value of the assigned variation
   dynamic value;
+
+  //todo change explanation
+  /// The user attribute used to assign a variation
+  bool? hashUsed;
 
   /// The user attribute used to assign a variation
   String? hasAttributes;

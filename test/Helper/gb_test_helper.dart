@@ -129,6 +129,9 @@ class GBExperimentResultTest {
   /// The array value of the assigned variation
   dynamic value;
 
+  //todo
+  bool? hashUsed;
+
   /// The user attribute used to assign a variation
   String? hashAttribute;
 
