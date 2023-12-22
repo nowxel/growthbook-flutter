@@ -45,7 +45,9 @@ void main() {
               "${result.inExperiment}" +
               "\n\n";
           if (item[3].toString() == result.value.toString() &&
-              item[4].toString() == result.inExperiment.toString()) {
+              item[4].toString() == result.inExperiment.toString() &&
+              item[5].toString() == result.hashUsed.toString()
+          ) {
             passedScenarios.add(status);
           } else {
             failedScenarios.add(status);

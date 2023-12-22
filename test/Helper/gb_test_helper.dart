@@ -113,9 +113,10 @@ class GBContextTest {
 
 class GBExperimentResultTest {
   GBExperimentResultTest({
-    this.inExperiment = false,
+    this.inExperiment = true,
     this.variationId,
     this.value,
+    this.hashUsed = false,
     this.hashAttribute,
     this.hashValue,
   });
@@ -142,6 +143,7 @@ class GBExperimentResultTest {
       GBExperimentResultTest(
         value: map['value'],
         inExperiment: map['inExperiment'],
+        hashUsed: map['hashUsed'],
         variationId: map['variationId'],
         hashAttribute: map['hashAttribute'],
         hashValue: map['hashValue'],
