@@ -163,6 +163,7 @@ class GBExperimentEvaluator {
 
     // check whether variations are non empty - then only query array against index
     if (experiment.variations.isNotEmpty) {
+      hashUsed = true;
       targetValue = experiment.variations[targetVariationIndex];
     }
 
