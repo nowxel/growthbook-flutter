@@ -1748,6 +1748,32 @@ const String gbTestCases = r'''
           }
         ],
         [
+            "force rule - coverage with integer hash attribute",
+            {
+                "attributes": {
+                    "id": 3
+                },
+                "features": {
+                    "feature": {
+                        "defaultValue": 2,
+                        "rules": [
+                            {
+                                "force": 1,
+                                "coverage": 0.5
+                            }
+                        ]
+                    }
+                }
+            },
+            "feature",
+            {
+                "value": 1,
+                "on": true,
+                "off": false,
+                "source": "force"
+            }
+        ],
+        [
           "force rules - coverage excluded",
           {
             "attributes": {
@@ -2277,6 +2303,44 @@ const String gbTestCases = r'''
             "on": true,
             "off": false,
             "source": "force"
+          }
+        ],
+        [
+          "handles integer hashAttribute",
+          {
+            "attributes": { "id": 123 },
+            "features": {
+              "feature": {
+                "defaultValue": 0,
+                "rules": [
+                  {
+                    "variations": [0, 1]
+                  }
+                ]
+              }
+            }
+          },
+          "feature",
+          {
+            "value": 1,
+            "on": true,
+            "off": false,
+            "source": "experiment",
+            "experiment": {
+              "key": "feature",
+              "variations": [0, 1]
+            },
+            "experimentResult": {
+              "featureId": "feature",
+              "hashAttribute": "id",
+              "hashValue": 123,
+              "hashUsed": true,
+              "inExperiment": true,
+              "value": 1,
+              "variationId": 1,
+              "key": "1",
+              "bucket": 0.863
+            }
           }
         ],
         [

@@ -38,7 +38,7 @@ class GBFeatureEvaluator {
           /// If rule.coverage is set
           if (rule.coverage != null) {
             final key = rule.hashAttribute ?? Constant.idAttribute;
-            final attributeValue = context.attributes?[key] as String? ?? '';
+            final attributeValue = context.attributes?[key].toString() ?? '';
 
             if (attributeValue.isEmpty) {
               continue;
