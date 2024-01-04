@@ -60,6 +60,7 @@ class GBExperimentResult {
     this.value,
     this.hasAttributes,
     this.hashValue,
+    this.featureId,
   });
 
   /// Whether or not the user is part of the experiment
@@ -76,4 +77,6 @@ class GBExperimentResult {
 
   /// The value of that attribute
   String? hashValue;
+
+  String? featureId;
 }
