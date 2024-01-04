@@ -98,6 +98,7 @@ class GBContextTest {
     this.enabled = true,
     this.forcedVariations,
   });
+
   dynamic attributes;
   bool qaMode;
   bool enabled;
@@ -141,6 +142,6 @@ class GBExperimentResultTest {
         inExperiment: map['inExperiment'],
         variationId: map['variationId'],
         hashAttribute: map['hashAttribute'],
-        hashValue: map['hashValue'],
+        hashValue: map['hashValue']?.toString(),
       );
 }
