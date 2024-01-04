@@ -3097,6 +3097,24 @@ const String gbTestCases = r'''
           false
         ],
         [
+          "null id",
+          {
+            "attributes": {
+              "id": null
+            }
+          },
+          {
+            "key": "my-test",
+            "variations": [
+              0,
+              1
+            ]
+          },
+          0,
+          false,
+          false
+        ],
+        [
           "missing id",
           {
             "attributes": {
