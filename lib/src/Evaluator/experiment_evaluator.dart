@@ -101,7 +101,9 @@ class GBExperimentEvaluator {
                 .toList()
             : []);
 
-    final hash = GBUtils.hash(attributeValue + (experiment.key ?? ''));
+    final hash = GBUtils.hash(
+            value: attributeValue, seed: experiment.key ?? '', version: 1) ??
+        0.0;
     final assigned = const GBUtils().chooseVariation(hash, bucketRange);
     // If not assigned a variation (assigned === -1), return immediately (not in experiment, variationId 0)
     if (assigned == -1) {

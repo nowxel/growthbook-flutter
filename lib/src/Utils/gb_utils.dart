@@ -30,16 +30,38 @@ class GBUtils {
   /// Hashes a string to a float between 0 and 1
   /// fnv32a returns an integer, so we convert that to a float using a modulus:
 
-  static double hash(String data) {
-    final hash = FNV().fnv1a_32(data);
-    final remainder = hash.remainder(BigInt.from(1000));
-    final value = remainder.toDouble() / 1000.0;
-    return value;
+  static double? hash({
+    required String seed,
+    required String value,
+    required double version,
+  }) {
+    if (version == 2) {
+      // New unbiased hashing algorithm
+      final combinedValue = seed + value;
+      final firstHash = FNV().fnv1a_32(combinedValue);
+      final secondHash = FNV().fnv1a_32(firstHash.toString());
+
+      final remainder = secondHash.remainder(BigInt.from(10000));
+      final hashedValue = remainder.toDouble() / 10000.0;
+      return hashedValue;
+    }
+    if (version == 1) {
+      // Original biased hashing algorithm (keep for backwards compatibility)
+      final combinedValue = value + seed;
+      final hash = FNV().fnv1a_32(combinedValue);
+      final remainder = hash.remainder(BigInt.from(1000));
+      final hashedValue = remainder.toDouble() / 1000.0;
+      return hashedValue;
+    }
+    // Unknown hash version
+    return null;
   }
 
   /// This checks if a userId is within an experiment namespace or not.
   static bool inNamespace(String userId, GBNameSpace namespace) {
-    final hashValue = hash(userId + "__" + namespace.item1);
+    final hashValue =
+        hash(value: "${userId}__", seed: namespace.item1, version: 1.0);
+    if (hashValue == null) return false;
     return hashValue >= namespace.item2 && hashValue < namespace.item3;
   }
 
