@@ -23,7 +23,7 @@ void main() {
         final testContext = item[0];
         final experiment = item[1];
 
-        final result = GBUtils.hash(testContext);
+        final result = GBUtils.hash(seed: '', value: testContext, version: 1);
 
         final status = item[0].toString() +
             '\nExpected Result - ' +
