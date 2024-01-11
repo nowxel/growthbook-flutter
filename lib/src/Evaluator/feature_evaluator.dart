@@ -33,6 +33,10 @@ class GBFeatureEvaluator {
           }
         }
 
+        if (GBUtils.isFilteredOut(rule.filters, context.attributes)) {
+          continue;
+        }
+
         /// If rule.force is set
         if (rule.force != null) {
           /// If rule.coverage is set
@@ -43,6 +47,16 @@ class GBFeatureEvaluator {
             if (attributeValue.isEmpty) {
               continue;
             } else {
+              if (!GBUtils.isIncludedInRollout(
+                context.attributes,
+                rule.seed,
+                rule.hashAttribute,
+                rule.range,
+                rule.coverage,
+                rule.hashVersion,
+              )) {
+                continue;
+              }
               // Compute a hash using the Fowler–Noll–Vo algorithm (specifically fnv32-1a)
               final hashFNV = GBUtils.hash(
                       value: attributeValue, seed: featureKey, version: 1.0) ??

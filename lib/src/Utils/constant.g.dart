@@ -12,8 +12,8 @@ GBFilter _$GBFilterFromJson(Map<String, dynamic> json) => GBFilter(
           .map((e) =>
               const Tuple2Converter().fromJson(e as Map<String, dynamic>))
           .toList(),
-      attribute: json['attribute'] as String,
-      hashVersion: json['hashVersion'] as int,
+      attribute: json['attribute'] as String?,
+      hashVersion: json['hashVersion'] as int?,
     );
 
 GBVariationMeta _$GBVariationMetaFromJson(Map<String, dynamic> json) =>

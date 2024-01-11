@@ -68,9 +68,9 @@ class GBFilter {
   @Tuple2Converter()
   final List<GBBucketRange> ranges;
 
-  final String attribute;
+  final String? attribute;
 
-  final int hashVersion;
+  final int? hashVersion;
 
   factory GBFilter.fromJson(Map<String, dynamic> value) =>
       _$GBFilterFromJson(value);
