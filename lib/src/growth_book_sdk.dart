@@ -97,7 +97,7 @@ class GrowthBookSDK extends FeaturesFlowDelegate {
         context: _context,
       ),
     );
-    await featureViewModel.fetchFeature();
+    await featureViewModel.fetchFeature(context.sseUrl);
   }
 
   GBFeatureResult feature(String id) {
