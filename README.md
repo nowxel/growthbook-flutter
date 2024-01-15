@@ -43,12 +43,13 @@ Now you can start/stop tests, adjust coverage and variation weights, and apply a
 ```dart
 final GrowthBookSDK sdkInstance = await GBSDKBuilderApp(
   apiKey: "<API_KEY>",
+  sseUrl: <GrowthBook_SSEURL/API_KEY>,
   attributes: {
     /// Specify attributes.
   },
   growthBookTrackingCallBack: (gbExperiment, gbExperimentResult) {},
   hostURL: '<GrowthBook_URL>',
-  apiKey: '<YOUR API KEY>'
+  backroundSync: Bool?
 ).initialize();
 
 ```
@@ -58,6 +59,7 @@ There are additional properties which can be setup at the time of initialization
 ```dart
     final GrowthBookSDK newSdkInstance =await GBSDKBuilderApp(
     apiKey: "<API_KEY>",
+    sseUrl: <GrowthBook_SSEURL/API_KEY>,
     attributes: {
      /// Specify user attributes.
     },
@@ -110,16 +112,21 @@ There are additional properties which can be setup at the time of initialization
 class GBContext {
   GBContext({
     this.apiKey,
+    this.sseUrl,
     this.hostURL,
     this.enabled,
     this.attributes,
     this.forcedVariation,
     this.qaMode,
     this.trackingCallBack,
+    this.backgroundSync,
   });
 
   /// Registered API key for GrowthBook SDK.
   String? apiKey;
+  
+  /// SSE URL
+  String? sseUrl;
 
   /// Host URL for GrowthBook
   String? hostURL;
@@ -142,6 +149,9 @@ class GBContext {
   /// Keys are unique identifiers for the features and the values are Feature objects.
   /// Feature definitions - To be pulled from API / Cache
   GBFeatures features = <String, GBFeature>{};
+
+  ///Disable background streaming connection
+  bool? backgroundSync;
 }
 ```
 
@@ -325,6 +335,21 @@ class GBExperimentResult {
   /// The value of that attribute
   String? hashValue;
 }
+
+```
+## Streaming updates
+
+To enable streaming updates set backgroundSync variable to "true" and add streaming updates URL
+```dart
+
+final GrowthBookSDK sdkInstance = GBSDKBuilderApp(
+  apiKey: "<API_KEY>",
+  sseUrl: "<GrowthBook_SSEURL/API_KEY>",
+  attributes: {
+    /// Specify attributes.
+  },
+  growthBookTrackingCallBack: (gbExperiment, gbExperimentResult) {},
+  backgroundSync: true,).initializer();
 
 ```
 

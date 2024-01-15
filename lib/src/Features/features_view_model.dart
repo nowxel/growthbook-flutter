@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
 import 'package:growthbook_sdk_flutter/src/Network/see_client.dart';
 import 'package:growthbook_sdk_flutter/src/Utils/crypto.dart';
@@ -38,6 +39,20 @@ class FeatureViewModel {
       } else {
         // Unsubscribe from SSE
         SSEManager.unsubscribeFromSSE();
+        ((e, s) {
+          delegate.featuresFetchFailed(
+            GBError(
+              error: DioException(
+                type: DioExceptionType.unknown,
+                requestOptions: RequestOptions(path: '', baseUrl: ''),
+                response: null,
+                error:
+                'SocketException: Failed host lookup: \'cdn.growthbook.io\' (OS Error: nodename nor servname provided, or not known, errno = 8)',
+              ),
+              stackTrace: s.toString(),
+            ),
+          );
+        })(null, null); // Call the anonymous function with appropriate parameters
       }
     } else {
       await source.fetchFeatures(
@@ -55,50 +70,51 @@ class FeatureViewModel {
   }
 
   void prepareFeaturesData(dynamic data) {
-    final Map<String, dynamic>? jsonPetitions = jsonDecode(data);
+    try {
+      final Map<String, dynamic>? jsonPetitions = jsonDecode(data);
 
-    if (jsonPetitions != null) {
-      if (jsonPetitions.containsKey('features')) {
-        final features = jsonPetitions['features'];
+      if (jsonPetitions != null) {
+        if (jsonPetitions.containsKey('features')) {
+          final features = jsonPetitions['features'];
 
-        if (features != null && features) {
-          delegate.featuresFetchedSuccessfully(features);
-        } else {
-          final encryptedString = jsonPetitions['encryptedFeatures'];
+          if (features != null && features) {
+            delegate.featuresFetchedSuccessfully(features);
+          } else {
+            final encryptedString = jsonPetitions['encryptedFeatures'];
 
-          if (encryptedString != null &&
-              encryptedString &&
-              encryptedString.isNotEmpty) {
-            if (encryptionKey != null && encryptionKey!.isNotEmpty) {
-              final crypto = Crypto();
-              final extractedFeatures = crypto.getFeaturesFromEncryptedFeatures(
-                encryptedString,
-                encryptionKey!,
-              );
+            if (encryptedString != null &&
+                encryptedString is String &&
+                encryptedString.isNotEmpty) {
+              if (encryptionKey != null && encryptionKey!.isNotEmpty) {
+                try {
+                  final crypto = Crypto();
+                  final extractedFeatures = crypto.getFeaturesFromEncryptedFeatures(
+                    encryptedString,
+                    encryptionKey!,
+                  );
 
-              if (extractedFeatures != null) {
-                delegate.featuresFetchedSuccessfully(extractedFeatures);
+                  if (extractedFeatures != null) {
+                    delegate.featuresFetchedSuccessfully(extractedFeatures);
+                  } else {
+                     print('Failed to extract features from encrypted string.');
+                  }
+                } catch (e, s) {
+                  delegate.featuresFetchFailed(GBError(error: e, stackTrace: s.toString()));
+                  return;
+                }
               } else {
-                delegate.featuresFetchFailed(
-                    const GBError(stackTrace: 'failedMissingKey'));
-                return;
+                 print('Encryption key is missing.');
               }
             } else {
-              delegate.featuresFetchFailed(
-                  const GBError(stackTrace: 'failedMissingKey'));
-              return;
+               print('Failed to parse encrypted data.');
             }
-          } else {
-            delegate.featuresFetchFailed(
-                const GBError(stackTrace: 'failedParsedData'));
-            return;
           }
+        } else {
+           print('Failed to parse data. Missing "features" key.');
         }
-      } else {
-        delegate
-            .featuresFetchFailed(const GBError(stackTrace: 'failedParsedData'));
-        return;
       }
+    } catch (e, s) {
+      delegate.featuresFetchFailed(GBError(error: e, stackTrace: s.toString()));
     }
   }
 }

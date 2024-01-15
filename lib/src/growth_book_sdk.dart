@@ -10,6 +10,7 @@ class GBSDKBuilderApp {
   GBSDKBuilderApp({
     required this.hostURL,
     required this.apiKey,
+    this.sseUrl,
     required this.growthBookTrackingCallBack,
     this.attributes = const <String, dynamic>{},
     this.qaMode = false,
@@ -18,12 +19,14 @@ class GBSDKBuilderApp {
     this.client,
     this.gbFeatures = const {},
     this.onInitializationFailure,
+    this.backgroundSync,
   }) : assert(
           hostURL.endsWith('/'),
           'Invalid host url: $hostURL. The hostUrl should be end with `/`, example: `https://example.growthbook.io/`',
         );
 
   final String apiKey;
+  final String? sseUrl;
   final String hostURL;
   final bool enable;
   final bool qaMode;
@@ -33,10 +36,12 @@ class GBSDKBuilderApp {
   final BaseClient? client;
   final GBFeatures gbFeatures;
   final OnInitializationFailure? onInitializationFailure;
+  final bool? backgroundSync;
 
   Future<GrowthBookSDK> initialize() async {
     final gbContext = GBContext(
       apiKey: apiKey,
+      sseUrl: sseUrl,
       hostURL: hostURL,
       enabled: enable,
       qaMode: qaMode,
@@ -44,6 +49,7 @@ class GBSDKBuilderApp {
       forcedVariation: forcedVariations,
       trackingCallBack: growthBookTrackingCallBack,
       features: gbFeatures,
+      backgroundSync: backgroundSync,
     );
     final gb = GrowthBookSDK._(
       context: gbContext,
