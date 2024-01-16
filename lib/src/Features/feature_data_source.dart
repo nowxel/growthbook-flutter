@@ -1,4 +1,5 @@
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:growthbook_sdk_flutter/src/Utils/feature_url_builder.dart';
 
 typedef FeatureFetchSuccessCallBack = void Function(
   FeaturedDataModel featuredDataModel,
@@ -19,7 +20,7 @@ class FeatureDataSource {
 
   Future<void> fetchFeatures(
       FeatureFetchSuccessCallBack onSuccess, OnError onError) async {
-    final api = context.hostURL! + Constant.featurePath + context.apiKey!;
+    final api = FeatureURLBuilder.buildUrl(context.hostURL!, context.apiKey!);
     await client.consumeGetRequest(
       api,
       (response) => onSuccess(

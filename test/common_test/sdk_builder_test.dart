@@ -9,19 +9,25 @@ void main() {
     const testApiKey = '<API_KEY>';
     const attr = <String, String>{};
     const testHostURL = 'https://example.growthbook.io/';
+    const testSseUrl = "https://host.com/sub/4r23r324f23";
     const client = MockNetworkClient();
 
     test("- default", () async {
       final sdk = await GBSDKBuilderApp(
         apiKey: testApiKey,
+        sseUrl: testSseUrl,
         hostURL: testHostURL,
         attributes: attr,
         client: client,
         growthBookTrackingCallBack: (experiment, experimentResult) {},
+        backgroundSync: false,
       ).initialize();
 
       /// Test API key
       expect(sdk.context.apiKey, testApiKey);
+
+      /// Test sse URL
+      expect(sdk.context.sseUrl, testSseUrl);
 
       /// Feature mode
       expect(sdk.context.enabled, true);
@@ -40,14 +46,16 @@ void main() {
       const variations = <String, int>{};
 
       final sdk = await GBSDKBuilderApp(
-              apiKey: testApiKey,
-              qaMode: true,
-              client: client,
-              forcedVariations: variations,
-              hostURL: testHostURL,
-              attributes: attr,
-              growthBookTrackingCallBack: (exp, result) {})
-          .initialize();
+        apiKey: testApiKey,
+        sseUrl: testSseUrl,
+        qaMode: true,
+        client: client,
+        forcedVariations: variations,
+        hostURL: testHostURL,
+        attributes: attr,
+        growthBookTrackingCallBack: (exp, result) {},
+        backgroundSync: false,
+      ).initialize();
       expect(sdk.context.enabled, true);
       expect(sdk.context.qaMode, true);
     });
@@ -56,9 +64,11 @@ void main() {
       expect(
         () => GBSDKBuilderApp(
           apiKey: testApiKey,
+          sseUrl: testSseUrl,
           hostURL: "https://example.growthbook.io",
           client: client,
           growthBookTrackingCallBack: (_, __) {},
+          backgroundSync: false,
         ),
         throwsAssertionError,
       );
@@ -67,10 +77,13 @@ void main() {
     test('- with network client', () async {
       GrowthBookSDK sdk = await GBSDKBuilderApp(
               apiKey: testApiKey,
+              sseUrl: testSseUrl,
               hostURL: testHostURL,
               attributes: attr,
               client: client,
-              growthBookTrackingCallBack: (exp, result) {})
+              growthBookTrackingCallBack: (exp, result) {},
+              backgroundSync: false,
+      )
           .initialize();
       final featureValue = sdk.feature('fwrfewrfe');
       expect(featureValue.source, GBFeatureSource.unknownFeature);
@@ -83,11 +96,13 @@ void main() {
       () async {
         GrowthBookSDK sdk = await GBSDKBuilderApp(
           apiKey: testApiKey,
+          sseUrl: testSseUrl,
           hostURL: testHostURL,
           attributes: attr,
           client: const MockNetworkClient(error: true),
           growthBookTrackingCallBack: (exp, result) {},
           gbFeatures: {'some-feature': GBFeature(defaultValue: true)},
+          backgroundSync: false,
         ).initialize();
         final featureValue = sdk.feature('some-feature');
         expect(featureValue.value, true);
@@ -104,12 +119,14 @@ void main() {
 
         await GBSDKBuilderApp(
           apiKey: testApiKey,
+          sseUrl: testSseUrl,
           hostURL: testHostURL,
           attributes: attr,
           client: const MockNetworkClient(error: true),
           growthBookTrackingCallBack: (exp, result) {},
           gbFeatures: {'some-feature': GBFeature(defaultValue: true)},
           onInitializationFailure: (e) => error = e,
+          backgroundSync: false,
         ).initialize();
 
         expect(error != null, true);
