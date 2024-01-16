@@ -416,6 +416,36 @@ class GBExperimentResult {
   bool? passthrough;
 }
 
+/// Meta info about the variations
+class GBVariationMeta {
+  /// Used to implement holdout groups
+  final bool? passthrough;
+
+  /// A unique key for this variation
+  final String? key;
+
+  /// A human-readable name for this variation
+  final String? name;
+
+  GBVariationMeta({
+    this.passthrough,
+    this.key,
+    this.name,
+  });
+}
+
+
+///Used for remote feature evaluation to trigger the `TrackingCallback`
+class GBTrackData {
+  final Experiment experiment;
+  final ExperimentResult result;
+
+  GBTrackData({
+    required this.experiment,
+    required this.result,
+  });
+}
+
 ```
 ## Streaming updates
 
