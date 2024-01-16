@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
@@ -70,51 +71,77 @@ class FeatureViewModel {
   }
 
   void prepareFeaturesData(dynamic data) {
+  try {
+    final Map<String, dynamic>? jsonPetitions = jsonDecode(data);
+
+    switch (jsonPetitions) {
+      case null:
+        log("JSON is null.");
+        break;
+
+      default:
+        final features = jsonPetitions!["features"];
+        final hasFeaturesKey = jsonPetitions.containsKey("features");
+
+        hasFeaturesKey
+            ? handleValidFeatures(features)
+            : log("Missing 'features' key.");
+
+        break;
+    }
+  } catch (e, s) {
+    handleException(e, s);
+  }
+}
+
+
+void handleValidFeatures(Map<String, GBFeature> features) {
+    delegate.featuresFetchedSuccessfully(features);
+  }
+
+  void handleInvalidFeatures(Map<String, dynamic>? jsonPetitions) {
+    final encryptedString = jsonPetitions?["encryptedFeatures"];
+
+    if (encryptedString == null ||
+        encryptedString is! String ||
+        encryptedString.isEmpty) {
+      logError("Failed to parse encrypted data.");
+      return;
+    }
+
+    if (encryptionKey == null || encryptionKey!.isEmpty) {
+      logError("Encryption key is missing.");
+      return;
+    }
+
     try {
-      final Map<String, dynamic>? jsonPetitions = jsonDecode(data);
+      final crypto = Crypto();
+      final extractedFeatures = crypto.getFeaturesFromEncryptedFeatures(
+        encryptedString,
+        encryptionKey!,
+      );
 
-      if (jsonPetitions != null) {
-        if (jsonPetitions.containsKey('features')) {
-          final features = jsonPetitions['features'];
-
-          if (features != null && features) {
-            delegate.featuresFetchedSuccessfully(features);
-          } else {
-            final encryptedString = jsonPetitions['encryptedFeatures'];
-
-            if (encryptedString != null &&
-                encryptedString is String &&
-                encryptedString.isNotEmpty) {
-              if (encryptionKey != null && encryptionKey!.isNotEmpty) {
-                try {
-                  final crypto = Crypto();
-                  final extractedFeatures = crypto.getFeaturesFromEncryptedFeatures(
-                    encryptedString,
-                    encryptionKey!,
-                  );
-
-                  if (extractedFeatures != null) {
-                    delegate.featuresFetchedSuccessfully(extractedFeatures);
-                  } else {
-                     print('Failed to extract features from encrypted string.');
-                  }
-                } catch (e, s) {
-                  delegate.featuresFetchFailed(GBError(error: e, stackTrace: s.toString()));
-                  return;
-                }
-              } else {
-                 print('Encryption key is missing.');
-              }
-            } else {
-               print('Failed to parse encrypted data.');
-            }
-          }
-        } else {
-           print('Failed to parse data. Missing "features" key.');
-        }
+      if (extractedFeatures != null) {
+        delegate.featuresFetchedSuccessfully(extractedFeatures);
+      } else {
+        logError("Failed to extract features from encrypted string.");
       }
     } catch (e, s) {
-      delegate.featuresFetchFailed(GBError(error: e, stackTrace: s.toString()));
+      delegate.featuresFetchFailed(GBError(
+        error: e,
+        stackTrace: s.toString(),
+      ));
     }
+  }
+
+  void handleException(dynamic e, dynamic s) {
+    delegate.featuresFetchFailed(GBError(
+      error: e,
+      stackTrace: s.toString(),
+    ));
+  }
+
+  void logError(String message) {
+    log("Failed to parse data. $message");
   }
 }
