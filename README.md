@@ -176,6 +176,14 @@ class GBFeatureRule {
     this.weights,
     this.nameSpace,
     this.hashAttribute,
+    this.hashVersion,
+    this.range,
+    this.ranges,
+    this.meta,
+    this.filters,
+    this.seed,
+    this.name,
+    this.phase,
   });
 
   /// Optional targeting condition
@@ -201,6 +209,31 @@ class GBFeatureRule {
 
   /// What user attribute should be used to assign variations (defaults to id)
   String? hashAttribute;
+  
+  /// The hash version to use (default to 1)
+  int? hashVersion;
+
+  /// A more precise version of coverage
+  GBBucketRange? range;
+
+  /// Ranges for experiment variations
+  @Tuple2Converter()
+  List<GBBucketRange>? ranges;
+
+  /// Meta info about the experiment variations
+  List<GBVariationMeta>? meta;
+
+  /// Array of filters to apply to the rule
+  List<GBFilter>? filters;
+
+  /// Seed to use for hashing
+  String? seed;
+
+  /// Human-readable name for the experiment
+  String? name;
+
+  /// The phase id of the experiment
+  String? phase;
 }
 
 
@@ -267,6 +300,13 @@ class GBExperiment {
     this.active = true,
     this.coverage,
     this.force,
+    this.hashVersion,
+    this.ranges,
+    this.meta,
+    this.filters,
+    this.seed,
+    this.name,
+    this.phase,
   });
 
   /// The globally unique tracking key for the experiment
@@ -298,6 +338,27 @@ class GBExperiment {
 
   ///Check if experiment is not active.
   bool get deactivated => !active;
+
+  /// The hash version to use (default to 1)
+  int? hashVersion;
+
+  /// Array of ranges, one per variation
+  List<GBBucketRange>? ranges;
+
+  /// Meta info about the variations
+  List<GBVariationMeta>? meta;
+
+  /// Array of filters to apply
+  List<GBFilter>? filters;
+
+  /// The hash seed to use
+  String? seed;
+
+  /// Human-readable name for the experiment
+  String? name;
+
+  /// Id of the current experiment phase
+  String? phase;
 }
 
 /// The result of running an Experiment given a specific Context
@@ -308,6 +369,11 @@ class GBExperimentResult {
     this.value,
     this.hasAttributes,
     this.hashValue,
+    this.featureId,
+    this.key,
+    this.name,
+    this.bucket,
+    this.passthrough,
   });
 
   /// Whether or not the user is part of the experiment
@@ -322,8 +388,22 @@ class GBExperimentResult {
   /// The user attribute used to assign a variation
   String? hasAttributes;
 
+  String? featureId;
+
   /// The value of that attribute
   String? hashValue;
+
+  /// The unique key for the assigned variation
+  String? key;
+
+  /// The human-readable name of the assigned variation
+  String? name;
+
+  /// The hash value used to assign a variation (double from 0 to 1)
+  double? bucket;
+
+  /// Used for holdout groups
+  bool? passthrough;
 }
 
 ```
