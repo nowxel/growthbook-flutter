@@ -179,7 +179,8 @@ class GBFeatureEvaluator {
   ///Returns tuple out of 2 elements: the attribute itself an its hash value
   static Tuple2<String, String> getHashAttribute(
       {String? attr, required attributeOverrides, required GBContext context}) {
-    final hashAttribute = attr ?? "id";
+    final hashAttr = attr ?? "0";
+    final hashAttribute = int.parse(hashAttr);
     var hashValue = "";
 
     if (attributeOverrides[hashAttribute] != null) {
@@ -188,7 +189,7 @@ class GBFeatureEvaluator {
       hashValue = context.attributes![hashAttribute].toString();
     }
 
-    return Tuple2(hashAttribute, hashValue);
+    return Tuple2(hashAttribute.toString(), hashValue);
   }
   
   ///Determines if the user is part of a gradual feature rollout.

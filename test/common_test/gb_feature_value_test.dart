@@ -20,20 +20,20 @@ void main() {
         final testData = GBFeaturesTest.fromMap(item[1]);
         final attributes = testData.attributes;
         final gbContext = GBContext(
-            sseUrl: null,
-            encryptionKey: null,
-            enabled: true,
-            qaMode: false,
-            attributes: attributes,
-            forcedVariation: {},
-            trackingCallBack: (_, __) {},
-            backgroundSync: false,
+          sseUrl: null,
+          encryptionKey: null,
+          enabled: true,
+          qaMode: false,
+          attributes: attributes,
+          forcedVariation: {},
+          trackingCallBack: (_, __) {},
+          backgroundSync: false,
         );
         if (testData.features != null) {
           gbContext.features = testData.features!;
         }
 
-        final result = GBFeatureEvaluator.evaluateFeature(gbContext, item[2]);
+        final result = GBFeatureEvaluator.evaluateFeature(gbContext, item[2], item);
         final expectedResult = GBFeatureResultTest.fromMap(item[3]);
 
         final status = item[0].toString() +
