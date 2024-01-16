@@ -42,6 +42,9 @@ GBFeatureRule _$GBFeatureRuleFromJson(Map<String, dynamic> json) =>
       seed: json['seed'] as String?,
       name: json['name'] as String?,
       phase: json['phase'] as String?,
+      tracks: json['tracks'] == null
+          ? null
+          : GBTrackData.fromJson(json['tracks'] as Map<String, dynamic>),
     );
 
 Value? _$JsonConverterFromJson<Json, Value>(

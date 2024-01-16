@@ -110,6 +110,7 @@ class GrowthBookSDK extends FeaturesFlowDelegate {
     return GBFeatureEvaluator.evaluateFeature(
       _context,
       id,
+      context.attributes,
     );
   }
 
