@@ -8,7 +8,7 @@ import 'package:tuple/tuple.dart';
 /// Returns Calculated Feature Result against that key
 
 class GBFeatureEvaluator {
-  static GBFeatureResult evaluateFeature(GBContext context, String featureKey, dynamic attributeOverrides) {
+  static GBFeatureResult evaluateFeature(GBContext context, String featureKey) {
     /// If we are not able to find feature on the basis of the passed featureKey
     /// then we are going to return unKnownFeature.
     final targetFeature = context.features[featureKey];
