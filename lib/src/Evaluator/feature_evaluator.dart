@@ -38,10 +38,7 @@ class GBFeatureEvaluator {
 
         // If there are filters for who is included
         if (rule.filters != null) {
-          if (isFilteredOut(
-              filters: rule.filters!,
-              attributeOverrides: attributeOverrides,
-              context: context)) {
+          if (GBUtils.isFilteredOut(rule.filters!, context.attributes)) {
             log("Skip rule because of filters");
             continue;
           }
@@ -54,14 +51,13 @@ class GBFeatureEvaluator {
         /// If rule.force is set
         if (rule.force != null) {
 
-          if (!isIncludedInRollout(
-            seed: rule.seed ?? "",
-            hashAttribute: rule.hashAttribute,
-            range: rule.range,
-            coverage: rule.coverage,
-            hashVersion: rule.hashVersion,
-            attributeOverrides: attributeOverrides,
-            context: context,
+          if (!GBUtils.isIncludedInRollout(
+            context.attributes,
+            rule.seed,
+            rule.hashAttribute,
+            rule.range,
+            rule.coverage,
+            rule.hashVersion,
           )) {
             log("Skip rule because user not included in rollout");
           }
@@ -158,76 +154,76 @@ class GBFeatureEvaluator {
   }
   
   ///This is a helper method to evaluate `filters` for both feature flags and experiments.
-  static bool isFilteredOut({required List<GBFilter> filters, required attributeOverrides, required GBContext context}) {
-    return filters.any((filter) {
-      final hashAttribute = getHashAttribute(
-          attr: filter.attribute,
-          attributeOverrides: attributeOverrides,
-          context: context);
-      final hashValue = hashAttribute.hashCode;
+  // static bool isFilteredOut({required List<GBFilter> filters, required attributeOverrides, required GBContext context}) {
+  //   return filters.any((filter) {
+  //     final hashAttribute = getHashAttribute(
+  //         attr: filter.attribute,
+  //         attributeOverrides: attributeOverrides,
+  //         context: context);
+  //     final hashValue = hashAttribute.hashCode;
 
-      final hash = GBUtils.hash(
-          seed: filter.seed, value: hashValue.toString(), version: filter.hashVersion!.toDouble());
-      if (hash == null) {
-        return true;
-      }
+  //     final hash = GBUtils.hash(
+  //         seed: filter.seed, value: hashValue.toString(), version: filter.hashVersion!.toDouble());
+  //     if (hash == null) {
+  //       return true;
+  //     }
 
-      return !filter.ranges.any((r) => GBUtils.inRange(hash, r));
-    });
-  }
+  //     return !filter.ranges.any((r) => GBUtils.inRange(hash, r));
+  //   });
+  // }
 
-  ///Returns tuple out of 2 elements: the attribute itself an its hash value
-  static Tuple2<String, String> getHashAttribute(
-      {String? attr, required attributeOverrides, required GBContext context}) {
-    final hashAttr = attr ?? "0";
-    final hashAttribute = int.parse(hashAttr);
-    var hashValue = "";
+  // ///Returns tuple out of 2 elements: the attribute itself an its hash value
+  // static Tuple2<String, String> getHashAttribute(
+  //     {String? attr, required attributeOverrides, required GBContext context}) {
+  //   final hashAttr = attr ?? "0";
+  //   final hashAttribute = int.parse(hashAttr);
+  //   var hashValue = "";
 
-    if (attributeOverrides[hashAttribute] != null) {
-      hashValue = attributeOverrides[hashAttribute].toString();
-    } else if (context.attributes![hashAttribute] != null) {
-      hashValue = context.attributes![hashAttribute].toString();
-    }
+  //   if (attributeOverrides[hashAttribute] != null) {
+  //     hashValue = attributeOverrides[hashAttribute].toString();
+  //   } else if (context.attributes![hashAttribute] != null) {
+  //     hashValue = context.attributes![hashAttribute].toString();
+  //   }
 
-    return Tuple2(hashAttribute.toString(), hashValue);
-  }
+  //   return Tuple2(hashAttribute.toString(), hashValue);
+  // }
   
-  ///Determines if the user is part of a gradual feature rollout.
-  static bool isIncludedInRollout({
-    required String seed,
-    String? hashAttribute,
-    GBBucketRange? range,
-    double? coverage,
-    int? hashVersion,
-    required attributeOverrides,
-    required GBContext context,
-  }) {
-    if (range == null && coverage == null) {
-      return true;
-    }
+  // ///Determines if the user is part of a gradual feature rollout.
+  // static bool isIncludedInRollout({
+  //   required String seed,
+  //   String? hashAttribute,
+  //   GBBucketRange? range,
+  //   double? coverage,
+  //   int? hashVersion,
+  //   required attributeOverrides,
+  //   required GBContext context,
+  // }) {
+  //   if (range == null && coverage == null) {
+  //     return true;
+  //   }
 
-    final hashValue = getHashAttribute(
-            attr: hashAttribute,
-            attributeOverrides: attributeOverrides,
-            context: context)
-        .item2;
+  //   final hashValue = getHashAttribute(
+  //           attr: hashAttribute,
+  //           attributeOverrides: attributeOverrides,
+  //           context: context)
+  //       .item2;
 
-    final hash = GBUtils.hash(
-        seed: seed,
-        value: hashValue,
-        version: hashVersion != null ? hashVersion.toDouble() : 1.0);
+  //   final hash = GBUtils.hash(
+  //       seed: seed,
+  //       value: hashValue,
+  //       version: hashVersion != null ? hashVersion.toDouble() : 1.0);
 
-    if (hash == null) {
-      return false;
-    }
+  //   if (hash == null) {
+  //     return false;
+  //   }
 
-    if (range != null) {
-      return GBUtils.inRange(hash, range);
-    } else if (coverage != null) {
-      return hash <= coverage;
-    } else {
-      return true;
-    }
-  }
+  //   if (range != null) {
+  //     return GBUtils.inRange(hash, range);
+  //   } else if (coverage != null) {
+  //     return hash <= coverage;
+  //   } else {
+  //     return true;
+  //   }
+  // }
 
 }
