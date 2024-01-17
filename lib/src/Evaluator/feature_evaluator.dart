@@ -44,23 +44,8 @@ class GBFeatureEvaluator {
           }
         }
 
-        if (GBUtils.isFilteredOut(rule.filters, context.attributes)) {
-          continue;
-        }
-
         /// If rule.force is set
         if (rule.force != null) {
-
-          if (!GBUtils.isIncludedInRollout(
-            context.attributes,
-            rule.seed,
-            rule.hashAttribute,
-            rule.range,
-            rule.coverage,
-            rule.hashVersion,
-          )) {
-            log("Skip rule because user not included in rollout");
-          }
 
           /// If rule.coverage is set
           if (rule.coverage != null) {
