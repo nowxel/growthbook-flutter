@@ -44,6 +44,7 @@ class GBFeatureRule {
     this.seed,
     this.name,
     this.phase,
+    this.tracks,
   });
 
   /// Optional targeting condition
@@ -96,6 +97,9 @@ class GBFeatureRule {
 
   /// The phase id of the experiment
   String? phase;
+
+  /// Array of tracking calls to fire
+  GBTrackData? tracks;
 
   factory GBFeatureRule.fromJson(Map<String, dynamic> value) =>
       _$GBFeatureRuleFromJson(value);

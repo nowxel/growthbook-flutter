@@ -20,14 +20,14 @@ void main() {
         final testData = GBFeaturesTest.fromMap(item[1]);
         final attributes = testData.attributes;
         final gbContext = GBContext(
-            sseUrl: null,
-            encryptionKey: null,
-            enabled: true,
-            qaMode: false,
-            attributes: attributes,
-            forcedVariation: {},
-            trackingCallBack: (_, __) {},
-            backgroundSync: false,
+          sseUrl: null,
+          encryptionKey: null,
+          enabled: true,
+          qaMode: false,
+          attributes: attributes,
+          forcedVariation: {},
+          trackingCallBack: (_, __) {},
+          backgroundSync: false,
         );
         if (testData.features != null) {
           gbContext.features = testData.features!;
