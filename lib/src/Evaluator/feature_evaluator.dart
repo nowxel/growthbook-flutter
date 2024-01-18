@@ -36,12 +36,8 @@ class GBFeatureEvaluator {
           }
         }
 
-        // If there are filters for who is included
-        if (rule.filters != null) {
-          if (GBUtils.isFilteredOut(rule.filters!, context.attributes)) {
-            log("Skip rule because of filters");
-            continue;
-          }
+        if (GBUtils.isFilteredOut(rule.filters, context.attributes)) {
+          continue;
         }
 
         /// If rule.force is set

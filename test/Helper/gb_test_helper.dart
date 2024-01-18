@@ -24,7 +24,7 @@ class GBTestHelper {
     return testData['feature'];
   }
 
-  static List<dynamic>? getDecryptData() {
+  static List? getDecryptData() {
     return testData?['decrypt']?.toList();
   }
 
