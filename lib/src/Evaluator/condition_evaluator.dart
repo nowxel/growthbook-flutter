@@ -74,10 +74,8 @@ class GBConditionEvaluator {
       for (final key in conditionOBJ.keys) {
         final element = getPath(attributes, key);
         final value = conditionOBJ[key];
-        if (value != null) {
-          if (!evalConditionValue(value, element)) {
-            return false;
-          }
+        if (!evalConditionValue(value, element)) {
+          return false;
         }
       }
     }
