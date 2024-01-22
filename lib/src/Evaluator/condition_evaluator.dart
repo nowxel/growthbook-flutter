@@ -336,7 +336,6 @@ class GBConditionEvaluator {
       }
     } else if (attributeValue is List) {
       switch (operator) {
-
         /// Evaluate ELEMENT-MATCH operator - whether condition matches attribute
         case "\$elemMatch":
           return elemMatch(attributeValue, conditionValue);
@@ -373,7 +372,6 @@ class GBConditionEvaluator {
         attributeValue as num;
         bool evaluatedValue = false;
         switch (operator) {
-
           /// Evaluate EQ operator - whether condition equals to attribute
           case '\$eq':
             evaluatedValue = conditionValue == attributeValue;
@@ -409,7 +407,21 @@ class GBConditionEvaluator {
         bool evaluatedValue = false;
         conditionValue as String;
         attributeValue as String;
+        final paddedVersionTarget = GBUtils.paddedVersionString(conditionValue);
+        final paddedVersionSource = GBUtils.paddedVersionString(attributeValue);
         switch (operator) {
+          case "\$veq":
+            return paddedVersionSource == paddedVersionTarget;
+          case "\$vne":
+            return paddedVersionSource != paddedVersionTarget;
+          case "\$vgt":
+            return paddedVersionSource > paddedVersionTarget;
+          case "\$vgte":
+            return paddedVersionSource >= paddedVersionTarget;
+          case "\$vlt":
+            return paddedVersionSource < paddedVersionTarget;
+          case "\$vlte":
+            return paddedVersionSource <= paddedVersionTarget;
 
           /// Evaluate EQ operator - whether condition equals to attribute
           case '\$eq':
