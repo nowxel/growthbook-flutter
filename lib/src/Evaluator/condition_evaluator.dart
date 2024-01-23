@@ -143,23 +143,23 @@ class GBConditionEvaluator {
       return GBAttributeType.gbNull;
     }
 
-    final _value = obj as Object;
+    final value = obj as Object;
 
-    if (_value.isPrimitive) {
-      if (_value.isString) {
+    if (value.isPrimitive) {
+      if (value.isString) {
         return GBAttributeType.gbString;
-      } else if (_value == true || _value == false) {
+      } else if (value == true || value == false) {
         return GBAttributeType.gbBoolean;
       } else {
         return GBAttributeType.gbNumber;
       }
     }
 
-    if (_value.isArray) {
+    if (value.isArray) {
       return GBAttributeType.gbArray;
     }
 
-    if (_value.isMap) {
+    if (value.isMap) {
       return GBAttributeType.gbObject;
     }
 
@@ -298,12 +298,12 @@ class GBConditionEvaluator {
     if (conditionValue is List) {
       switch (operator) {
         case '\$in':
-          return conditionValue.contains(attributeValue);
+          return isIn(attributeValue, conditionValue);
 
         /// Evaluate NIN operator - attributeValue not in the conditionValue
         /// array.
         case '\$nin':
-          return !conditionValue.contains(attributeValue);
+          return !isIn(attributeValue, conditionValue);
 
         /// Evaluate ALL operator - whether condition contains all attribute
         case '\$all':
@@ -450,5 +450,12 @@ class GBConditionEvaluator {
     }
 
     return false;
+  }
+
+  bool isIn(dynamic actualValue, List<dynamic> conditionValue) {
+    if (actualValue is List) {
+      return actualValue.any((el) => conditionValue.contains(el));
+    }
+    return conditionValue.contains(actualValue);
   }
 }
