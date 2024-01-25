@@ -143,23 +143,23 @@ class GBConditionEvaluator {
       return GBAttributeType.gbNull;
     }
 
-    final _value = obj as Object;
+    final value = obj as Object;
 
-    if (_value.isPrimitive) {
-      if (_value.isString) {
+    if (value.isPrimitive) {
+      if (value.isString) {
         return GBAttributeType.gbString;
-      } else if (_value == true || _value == false) {
+      } else if (value == true || value == false) {
         return GBAttributeType.gbBoolean;
       } else {
         return GBAttributeType.gbNumber;
       }
     }
 
-    if (_value.isArray) {
+    if (value.isArray) {
       return GBAttributeType.gbArray;
     }
 
-    if (_value.isMap) {
+    if (value.isMap) {
       return GBAttributeType.gbObject;
     }
 
@@ -298,12 +298,12 @@ class GBConditionEvaluator {
     if (conditionValue is List) {
       switch (operator) {
         case '\$in':
-          return conditionValue.contains(attributeValue);
+          return isIn(attributeValue, conditionValue);
 
         /// Evaluate NIN operator - attributeValue not in the conditionValue
         /// array.
         case '\$nin':
-          return !conditionValue.contains(attributeValue);
+          return !isIn(attributeValue, conditionValue);
 
         /// Evaluate ALL operator - whether condition contains all attribute
         case '\$all':
@@ -334,7 +334,6 @@ class GBConditionEvaluator {
       }
     } else if (attributeValue is List) {
       switch (operator) {
-
         /// Evaluate ELEMENT-MATCH operator - whether condition matches attribute
         case "\$elemMatch":
           return elemMatch(attributeValue, conditionValue);
@@ -371,7 +370,6 @@ class GBConditionEvaluator {
         attributeValue as num?;
         bool evaluatedValue = false;
         switch (operator) {
-
           /// Evaluate EQ operator - whether condition equals to attribute
           case '\$eq':
             evaluatedValue = conditionValue == attributeValue;
@@ -432,7 +430,21 @@ class GBConditionEvaluator {
         bool evaluatedValue = false;
         conditionValue as String;
         attributeValue as String;
+        final paddedVersionTarget = GBUtils.paddedVersionString(conditionValue);
+        final paddedVersionSource = GBUtils.paddedVersionString(attributeValue);
         switch (operator) {
+          case "\$veq":
+            return paddedVersionSource == paddedVersionTarget;
+          case "\$vne":
+            return paddedVersionSource != paddedVersionTarget;
+          case "\$vgt":
+            return paddedVersionSource > paddedVersionTarget;
+          case "\$vgte":
+            return paddedVersionSource >= paddedVersionTarget;
+          case "\$vlt":
+            return paddedVersionSource < paddedVersionTarget;
+          case "\$vlte":
+            return paddedVersionSource <= paddedVersionTarget;
 
           /// Evaluate EQ operator - whether condition equals to attribute
           case '\$eq':
@@ -475,5 +487,12 @@ class GBConditionEvaluator {
     }
 
     return false;
+  }
+
+  bool isIn(dynamic actualValue, List<dynamic> conditionValue) {
+    if (actualValue is List) {
+      return actualValue.any((el) => conditionValue.contains(el));
+    }
+    return conditionValue.contains(actualValue);
   }
 }

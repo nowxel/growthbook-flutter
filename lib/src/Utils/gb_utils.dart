@@ -206,4 +206,28 @@ class GBUtils {
     if (hashResult == null) return false;
     return range != null ? inRange(hashResult, range) : hashResult <= coverage!;
   }
+
+  static String paddedVersionString(String input) {
+    // "v1.2.3-rc.1+build123" -> ["1","2","3","rc","1"]
+    List<String> parts =
+        input.replaceAll(RegExp(r'^v|\+.*$'), '').split(RegExp(r'[-.]'));
+
+    // ["1","0","0"] -> ["1","0","0","~"]
+    // "~" is the largest ASCII character, so this will make "1.0.0" greater than "1.0.0-beta" for example
+    if (parts.length == 3) {
+      List<String> arrayList = List.from(parts);
+      arrayList.add("~");
+      parts = arrayList;
+    }
+
+    // Left pad each numeric part with spaces so string comparisons will work
+    for (int i = 0; i < parts.length; i++) {
+      if (RegExp(r'^\d+$').hasMatch(parts[i])) {
+        parts[i] = parts[i].padLeft(5, ' ');
+      }
+    }
+
+    // Then, join back together into a single string
+    return parts.join('-');
+  }
 }
