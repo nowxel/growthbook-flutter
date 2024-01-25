@@ -367,8 +367,8 @@ class GBConditionEvaluator {
 
       /// If condition is num.
       if (conditionValue.isNumber && attributeValue.isNumber) {
-        conditionValue as num;
-        attributeValue as num;
+        conditionValue as num?;
+        attributeValue as num?;
         bool evaluatedValue = false;
         switch (operator) {
 
@@ -383,19 +383,44 @@ class GBConditionEvaluator {
             break;
           // Evaluate LT operator - whether attribute less than to condition
           case '\$lt':
-            evaluatedValue = attributeValue < conditionValue;
+            if (attributeValue != null && conditionValue != null) {
+              evaluatedValue = attributeValue < conditionValue;
+            }
+            if (attributeValue == null) {
+              evaluatedValue = 0.0 < conditionValue!.toDouble();
+            } else {
+              evaluatedValue = attributeValue < conditionValue!;
+            }
             break;
 
           /// Evaluate LTE operator - whether attribute less than or equal to condition
           case '\$lte':
-            evaluatedValue = attributeValue <= conditionValue;
+            if (attributeValue != null && conditionValue != null) {
+              evaluatedValue = attributeValue <= conditionValue;
+            } else {
+              evaluatedValue = attributeValue == null
+                  ? 0.0 <= conditionValue!.toDouble()
+                  : attributeValue <= conditionValue!;
+            }
             break;
           // Evaluate GT operator - whether attribute greater than to condition
           case '\$gt':
-            evaluatedValue = attributeValue > conditionValue;
+            if (attributeValue != null && conditionValue != null) {
+              evaluatedValue = attributeValue > conditionValue;
+            } else {
+              evaluatedValue = attributeValue == null
+                  ? 0.0 > conditionValue!
+                  : attributeValue > conditionValue!;
+            }
             break;
           case '\$gte':
-            evaluatedValue = attributeValue >= conditionValue;
+            if (attributeValue != null && conditionValue != null) {
+              evaluatedValue = attributeValue >= conditionValue;
+            } else {
+              evaluatedValue = attributeValue == null
+                  ? 0.0 >= conditionValue!.toDouble()
+                  : attributeValue >= conditionValue!;
+            }
             break;
           default:
             conditionValue = false;
