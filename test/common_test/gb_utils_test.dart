@@ -267,4 +267,12 @@ void main() {
       }
     });
   });
+
+  test('TestPaddedVersionString', () {
+    const startValue = "v1.2.3-rc.1+build123";
+    const expectedValue = "    1-    2-    3-rc-    1";
+    final endValue = GBUtils.paddedVersionString(startValue);
+
+    expect(endValue, expectedValue);
+  });
 }
