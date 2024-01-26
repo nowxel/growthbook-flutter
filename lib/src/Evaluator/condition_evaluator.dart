@@ -351,9 +351,9 @@ class GBConditionEvaluator {
       final targetPrimitiveValue = double.tryParse(conditionValue.toString());
       final sourcePrimitiveValue = double.tryParse(attributeValue.toString());
       final paddedVersionTarget =
-          GBUtils.paddedVersionString(targetPrimitiveValue.toString());
+          GBUtils.paddedVersionString(conditionValue.toString());
       final paddedVersionSource = GBUtils.paddedVersionString(
-          sourcePrimitiveValue?.toString() ?? '0.0');
+          attributeValue?.toString() ?? '0.0');
 
       /// If condition is bool.
       bool evaluatedValue = false;
@@ -420,6 +420,7 @@ class GBConditionEvaluator {
       }
       return evaluatedValue;
     }
+    print(' return here ');
     return false;
   }
 

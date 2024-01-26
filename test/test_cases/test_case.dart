@@ -140,6 +140,104 @@ const String gbTestCases = r'''
           true
         ],
         [
+            "$groups - match",
+            {
+                "$and": [
+                    {
+                        "$groups": {
+                            "$elemMatch": { "$eq": "a" }
+                        }
+                    },
+                    {
+                        "$groups": {
+                            "$elemMatch": { "$eq": "b" }
+                        }
+                    },
+                    {
+                        "$or": [
+                            {
+                                "$groups": {
+                                    "$elemMatch": { "$eq": "c" }
+                                }
+                            },
+                            {
+                                "$groups": {
+                                    "$elemMatch": { "$eq": "e" }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "$not": {
+                            "$groups": {
+                                "$elemMatch": { "$eq": "f" }
+                            }
+                        }
+                    },
+                    {
+                        "$not": {
+                            "$groups": {
+                                "$elemMatch": { "$eq": "g" }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "$groups": ["a", "b", "c", "d"]
+            },
+            true
+        ],
+        [
+            "$groups - no match",
+            {
+                "$and": [
+                    {
+                        "$groups": {
+                            "$elemMatch": { "$eq": "a" }
+                        }
+                    },
+                    {
+                        "$groups": {
+                            "$elemMatch": { "$eq": "b" }
+                        }
+                    },
+                    {
+                        "$or": [
+                            {
+                                "$groups": {
+                                    "$elemMatch": { "$eq": "c" }
+                                }
+                            },
+                            {
+                                "$groups": {
+                                    "$elemMatch": { "$eq": "e" }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "$not": {
+                            "$groups": {
+                                "$elemMatch": { "$eq": "d" }
+                            }
+                        }
+                    },
+                    {
+                        "$not": {
+                            "$groups": {
+                                "$elemMatch": { "$eq": "g" }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "$groups": ["a", "b", "c", "d"]
+            },
+            false
+        ],
+        [
           "$and    /$or     - first or true",
           {
             "$and": [
@@ -402,6 +500,78 @@ const String gbTestCases = r'''
           false
         ],
         [
+          "$in - not array",
+          {
+            "num": {
+              "$in": 1
+            }
+          },
+          {
+            "num": 1
+          },
+          false
+        ],
+        [
+          "$in - array pass 1",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "e", "a"]
+          },
+          true
+        ],
+        [
+          "$in - array pass 2",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "b", "f"]
+          },
+          true
+        ],
+        [
+          "$in - array pass 3",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "b", "a"]
+          },
+          true
+        ],
+        [
+          "$in - array fail 1",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "e", "f"]
+          },
+          false
+        ],
+        [
+          "$in - array fail 2",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": []
+          },
+          false
+        ],
+        [
           "$nin     - pass",
           {
             "num": {
@@ -432,6 +602,78 @@ const String gbTestCases = r'''
             "num": 2
           },
           false
+        ],
+        [
+          "$nin - not array",
+          {
+            "num": {
+              "$nin": 1
+            }
+          },
+          {
+            "num": 1
+          },
+          false
+        ],
+        [
+          "$nin - array fail 1",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "e", "a"]
+          },
+          false
+        ],
+        [
+          "$nin - array fail 2",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "b", "f"]
+          },
+          false
+        ],
+        [
+          "$nin - array fail 3",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "b", "a"]
+          },
+          false
+        ],
+        [
+          "$nin - array pass 1",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "e", "f"]
+          },
+          true
+        ],
+        [
+          "$nin - array pass 2",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": []
+          },
+          true
         ],
         [
           "$elemMatch     - pass - flat arrays",
@@ -572,6 +814,150 @@ const String gbTestCases = r'''
           true
         ],
         [
+          "$veq     - pass",
+            {
+            "version": {
+               "$veq": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            true
+        ],
+        [
+          "$veq     - fail",
+            {
+            "version": {
+               "$veq": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1-    2-    3-rc-    2"
+            },
+            false
+        ],
+        [
+          "$vne     - pass",
+            {
+            "version": {
+               "$vne": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.3.4-rc.3"
+            },
+            true
+        ],
+        [
+          "$vne     - fail",
+            {
+            "version": {
+               "$vne": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            false
+        ],
+        [
+          "$vgt     - pass",
+            {
+            "version": {
+               "$vgt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.4-rc.0"
+            },
+            true
+        ],
+        [
+          "$vgt     - fail",
+            {
+            "version": {
+               "$vgt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.2-rc.0"
+            },
+            false
+        ],
+        [
+          "$vgte     - pass",
+            {
+            "version": {
+               "$vgte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            true
+        ],
+        [
+          "$vgte     - fail",
+            {
+            "version": {
+               "$vgte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.2-rc.1"
+            },
+            false
+        ],
+        [
+          "$vlt     - pass",
+            {
+            "version": {
+               "$vlt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.2-rc.1"
+            },
+            true
+        ],
+        [
+          "$vlt     - fail",
+            {
+            "version": {
+               "$vlt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.4-rc.1"
+            },
+            false
+        ],
+        [
+          "$vlte     - pass",
+            {
+            "version": {
+               "$vlte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            true
+        ],
+        [
+          "$vlte     - fail",
+            {
+            "version": {
+               "$vlte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.4-rc.1"
+            },
+            false
+        ],
+        [
           "$eq     - fail",
           {
             "occupation": {
@@ -643,6 +1029,779 @@ const String gbTestCases = r'''
             "age": 50
           },
           true
+        ],
+        [
+          "$gt    /$lt     numbers - fail $lt    ",
+          {
+            "age": {
+              "$gt": 30,
+              "$lt": 60
+            }
+          },
+          {
+            "age": 60
+          },
+          false
+        ],
+         [
+          "$gt    /$lt     numbers - fail $gt    ",
+          {
+            "age": {
+              "$gt": 30,
+              "$lt": 60
+            }
+          },
+          {
+            "age": 30
+          },
+          false
+        ],
+        [
+          "$gte    /$lte     numbers - pass",
+          {
+            "age": {
+              "$gte": 30,
+              "$lte": 60
+            }
+          },
+          {
+            "age": 50
+          },
+          true
+        ],
+        [
+          "$gte    /$lte     numbers - pass $gte    ",
+          {
+            "age": {
+              "$gte": 30,
+              "$lte": 60
+            }
+          },
+          {
+            "age": 30
+          },
+          true
+        ],
+        [
+          "$gte    /$lte     numbers - pass $lte    ",
+          {
+            "age": {
+              "$gte": 30,
+              "$lte": 60
+            }
+          },
+          {
+            "age": 60
+          },
+          true
+        ],
+        [
+          "$gte    /$lte     numbers - fail $lte    ",
+          {
+            "age": {
+              "$gte": 30,
+              "$lte": 60
+            }
+          },
+          {
+            "age": 61
+          },
+          false
+        ],
+        [
+          "$gte    /$lte     numbers - fail $gte    ",
+          {
+            "age": {
+              "$gt": 30,
+              "$lt": 60
+            }
+          },
+          {
+            "age": 29
+          },
+          false
+        ],
+        [
+          "$type     string - pass",
+          {
+            "a": {
+              "$type": "string"
+            }
+          },
+          {
+            "a": "a"
+          },
+          true
+        ],
+        [
+          "$type     string - fail",
+          {
+            "a": {
+              "$type": "string"
+            }
+          },
+          {
+            "a": 1
+          },
+          false
+        ],
+        [
+          "$type     null - pass",
+          {
+            "a": {
+              "$type": "null"
+            }
+          },
+          {
+            "a": null
+          },
+          true
+        ],
+        [
+          "$type     null - fail",
+          {
+            "a": {
+              "$type": "null"
+            }
+          },
+          {
+            "a": 1
+          },
+          false
+        ],
+        [
+          "$type     boolean - pass",
+          {
+            "a": {
+              "$type": "boolean"
+            }
+          },
+          {
+            "a": false
+          },
+          true
+        ],
+        [
+          "$type     boolean - fail",
+          {
+            "a": {
+              "$type": "boolean"
+            }
+          },
+          {
+            "a": 1
+          },
+          false
+        ],
+        [
+          "$type     number - pass",
+          {
+            "a": {
+              "$type": "number"
+            }
+          },
+          {
+            "a": 1
+          },
+          true
+        ],
+        [
+          "$type     number - fail",
+          {
+            "a": {
+              "$type": "number"
+            }
+          },
+          {
+            "a": "a"
+          },
+          false
+        ],
+        [
+          "$type     object - pass",
+          {
+            "a": {
+              "$type": "object"
+            }
+          },
+          {
+            "a": {
+              "a": "b"
+            }
+          },
+          true
+        ],
+        [
+          "$type     object - fail",
+          {
+            "a": {
+              "$type": "object"
+            }
+          },
+          {
+            "a": 1
+          },
+          false
+        ],
+        [
+          "$type     array - pass",
+          {
+            "a": {
+              "$type": "array"
+            }
+          },
+          {
+            "a": [
+              1,
+              2
+            ]
+          },
+          true
+        ],
+        [
+          "$type     array - fail",
+          {
+            "a": {
+              "$type": "array"
+            }
+          },
+          {
+            "a": 1
+          },
+          false
+        ],
+        [
+          "unknown operator - pass",
+          {
+            "name": {
+              "$regx": "hello"
+            }
+          },
+          {
+            "name": "hello"
+          },
+          false
+        ],
+        [
+          "$regex     invalid - pass",
+          {
+            "name": {
+              "$regex": "/???***[)"
+            }
+          },
+          {
+            "name": "hello"
+          },
+          false
+        ],
+        [
+          "$regex     invalid - fail",
+          {
+            "name": {
+              "$regex": "/???***[)"
+            }
+          },
+          {
+            "hello": "hello"
+          },
+          false
+        ],
+        [
+          "$size     number - pass",
+          {
+            "tags": {
+              "$size": 3
+            }
+          },
+          {
+            "tags": [
+              "a",
+              "b",
+              "c"
+            ]
+          },
+          true
+        ],
+        [
+          "$size     number - fail small",
+          {
+            "tags": {
+              "$size": 3
+            }
+          },
+          {
+            "tags": [
+              "a",
+              "b"
+            ]
+          },
+          false
+        ],
+        [
+          "$size     number - fail large",
+          {
+            "tags": {
+              "$size": 3
+            }
+          },
+          {
+            "tags": [
+              "a",
+              "b",
+              "c",
+              "d"
+            ]
+          },
+          false
+        ],
+        [
+          "$size     number - fail not array",
+          {
+            "tags": {
+              "$size": 3
+            }
+          },
+          {
+            "tags": "abc"
+          },
+          false
+        ],
+        [
+          "$size     nested - pass",
+          {
+            "tags": {
+              "$size": {
+                "$gt": 2
+              }
+            }
+          },
+          {
+            "tags": [
+              0,
+              1,
+              2
+            ]
+          },
+          true
+        ],
+        [
+          "$size     nested - fail equal",
+          {
+            "tags": {
+              "$size": {
+                "$gt": 2
+              }
+            }
+          },
+          {
+            "tags": [
+              0,
+              1
+            ]
+          },
+          false
+        ],
+        [
+          "$size     nested - fail less than",
+          {
+            "tags": {
+              "$size": {
+                "$gt": 2
+              }
+            }
+          },
+          {
+            "tags": [
+              0
+            ]
+          },
+          false
+        ],
+        [
+         "$elemMatch intersection - pass",
+          {
+            "tags": {
+              "$elemMatch": {
+                "$in": ["a", "b"]
+              }
+            }
+          },
+          {
+            "tags": ["d", "e", "b"]
+          },
+          true
+        ],
+        [
+          "$elemMatch intersection - fail",
+          {
+            "tags": {
+              "$elemMatch": {
+                "$in": ["a", "b"]
+              }
+            }
+          },
+          {
+            "tags": ["d", "e", "f"]
+          },
+          false
+        ],
+        [
+          "$elemMatch     nested - pass",
+          {
+            "hobbies": {
+              "$elemMatch": {
+                "name": {
+                  "$regex": "^ping"
+                }
+              }
+            }
+          },
+          {
+            "hobbies": [
+              {
+                "name": "bowling"
+              },
+              {
+                "name": "pingpong"
+              },
+              {
+                "name": "tennis"
+              }
+            ]
+          },
+          true
+        ],
+        [
+          "$elemMatch     nested - fail",
+          {
+            "hobbies": {
+              "$elemMatch": {
+                "name": {
+                  "$regex": "^ping"
+                }
+              }
+            }
+          },
+          {
+            "hobbies": [
+              {
+                "name": "bowling"
+              },
+              {
+                "name": "tennis"
+              }
+            ]
+          },
+          false
+        ],
+        [
+          "$elemMatch     nested - fail not array",
+          {
+            "hobbies": {
+              "$elemMatch": {
+                "name": {
+                  "$regex": "^ping"
+                }
+              }
+            }
+          },
+          {
+            "hobbies": "all"
+          },
+          false
+        ],
+        [
+          "$not     - pass",
+          {
+            "name": {
+              "$not": {
+                "$regex": "^hello"
+              }
+            }
+          },
+          {
+            "name": "world"
+          },
+          true
+        ],
+        [
+          "$not     - fail",
+          {
+            "name": {
+              "$not": {
+                "$regex": "^hello"
+              }
+            }
+          },
+          {
+            "name": "hello world"
+          },
+          false
+        ],
+        [
+          "$all     - pass",
+          {
+            "tags": {
+              "$all": [
+                "one",
+                "three"
+              ]
+            }
+          },
+          {
+            "tags": [
+              "one",
+              "two",
+              "three"
+            ]
+          },
+          true
+        ],
+        [
+          "$all     - fail",
+          {
+            "tags": {
+              "$all": [
+                "one",
+                "three"
+              ]
+            }
+          },
+          {
+            "tags": [
+              "one",
+              "two",
+              "four"
+            ]
+          },
+          false
+        ],
+        [
+          "$all     - fail not array",
+          {
+            "tags": {
+              "$all": [
+                "one",
+                "three"
+              ]
+            }
+          },
+          {
+            "tags": "hello"
+          },
+          false
+        ],
+        [
+          "$nor     - pass",
+          {
+            "$nor": [
+              {
+                "name": "john"
+              },
+              {
+                "age": {
+                  "$lt": 30
+                }
+              }
+            ]
+          },
+          {
+            "name": "jim",
+            "age": 40
+          },
+          true
+        ],
+        [
+          "$nor     - fail both",
+          {
+            "$nor": [
+              {
+                "name": "john"
+              },
+              {
+                "age": {
+                  "$lt": 30
+                }
+              }
+            ]
+          },
+          {
+            "name": "john",
+            "age": 20
+          },
+          false
+        ],
+        [
+          "$nor     - fail first",
+          {
+            "$nor": [
+              {
+                "name": "john"
+              },
+              {
+                "age": {
+                  "$lt": 30
+                }
+              }
+            ]
+          },
+          {
+            "name": "john",
+            "age": 40
+          },
+          false
+        ],
+        [
+          "$nor     - fail second",
+          {
+            "$nor": [
+              {
+                "name": "john"
+              },
+              {
+                "age": {
+                  "$lt": 30
+                }
+              }
+            ]
+          },
+          {
+            "name": "jim",
+            "age": 20
+          },
+          false
+        ],
+        [
+          "equals array - pass",
+          {
+            "tags": [
+              "hello",
+              "world"
+            ]
+          },
+          {
+            "tags": [
+              "hello",
+              "world"
+            ]
+          },
+          true
+        ],
+        [
+          "equals array - fail order",
+          {
+            "tags": [
+              "hello",
+              "world"
+            ]
+          },
+          {
+            "tags": [
+              "world",
+              "hello"
+            ]
+          },
+          false
+        ],
+        [
+          "equals array - fail missing item",
+          {
+            "tags": [
+              "hello",
+              "world"
+            ]
+          },
+          {
+            "tags": [
+              "hello"
+            ]
+          },
+          false
+        ],
+        [
+          "equals array - fail extra item",
+          {
+            "tags": [
+              "hello",
+              "world"
+            ]
+          },
+          {
+            "tags": [
+              "hello",
+              "world",
+              "foo"
+            ]
+          },
+          false
+        ],
+        [
+          "equals array - fail type mismatch",
+          {
+            "tags": [
+              "hello",
+              "world"
+            ]
+          },
+          {
+            "tags": "hello world"
+          },
+          false
+        ],
+        [
+          "equals object - pass",
+          {
+            "tags": {
+              "hello": "world"
+            }
+          },
+          {
+            "tags": {
+              "hello": "world"
+            }
+          },
+          true
+        ],
+        [
+          "equals object - fail extra property",
+          {
+            "tags": {
+              "hello": "world"
+            }
+          },
+          {
+            "tags": {
+              "hello": "world",
+              "yes": "please"
+            }
+          },
+          false
+        ],
+        [
+          "equals object - fail missing property",
+          {
+            "tags": {
+              "hello": "world"
+            }
+          },
+          {
+            "tags": {
+              
+            }
+          },
+          false
+        ],
+        [
+          "equals object - fail type mismatch",
+          {
+            "tags": {
+              "hello": "world"
+            }
+          },
+          {
+            "tags": "hello world"
+          },
+          false
         ],
         [
             "comparing numbers and strings",
