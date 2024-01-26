@@ -10,7 +10,7 @@ import 'dart:math';
 /// 6.Map
 extension ObjectChecker on Object? {
   /// Check that if object is string.
-  bool get isString => this is String || isNull;
+  bool get isString => this is String;
 
   /// Check that if object is List.
   bool get isArray => this is List;
@@ -22,7 +22,7 @@ extension ObjectChecker on Object? {
   bool get isBoolean => this is bool;
 
   /// Check that if object is number.
-  bool get isNumber => this is num || this is int || this is double || isNull;
+  bool get isNumber => this is num || this is int || this is double;
 
   /// Check that if object is map.
   bool get isMap => this is Map;
