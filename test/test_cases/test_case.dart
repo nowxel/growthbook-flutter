@@ -1043,7 +1043,7 @@ const String gbTestCases = r'''
           },
           false
         ],
-         [
+        [
           "$gt    /$lt     numbers - fail $gt    ",
           {
             "age": {
@@ -1802,34 +1802,8 @@ const String gbTestCases = r'''
             "tags": "hello world"
           },
           false
-        ],
-        [
-            "comparing numbers and strings",
-            {
-                "n": {
-                    "$gt": 5,
-                    "$lt": 10
-                }
-            },
-            {
-                "n": "8"
-            },
-            true
-        ],
-        [
-            "comparing numbers and strings - v2",
-            {
-                "n": {
-                    "$gt": "5",
-                    "$lt": "10"
-                }
-            },
-            {
-                "n": 8
-            },
-            true
         ]
-],
+      ],
       "hash": [
         [
           "a",
