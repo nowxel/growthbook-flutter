@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
@@ -112,6 +114,39 @@ void main() {
       },
     );
 
+    test('- testEncrypt', () async {
+      final sdkInstance = await GBSDKBuilderApp(
+        hostURL: testHostURL,
+        sseUrl: testSseUrl,
+        apiKey: testApiKey,
+        growthBookTrackingCallBack: (exp, result) {},
+        attributes: attr,
+        backgroundSync: false,
+      ).initialize();
+
+      final encryptedFeatures =
+          "vMSg2Bj/IurObDsWVmvkUg==.L6qtQkIzKDoE2Dix6IAKDcVel8PHUnzJ7JjmLjFZFQDqidRIoCxKmvxvUj2kTuHFTQ3/NJ3D6XhxhXXv2+dsXpw5woQf0eAgqrcxHrbtFORs18tRXRZza7zqgzwvcznx";
+      final expectedResult =
+          '{"testfeature1":{"defaultValue":true,"rules":[{"condition":{"id":"1234"},"force":false}]}}';
+
+      sdkInstance.setEncryptedFeatures(
+        encryptedFeatures,
+        "Ns04T5n9+59rl2x3SlNHtQ==",
+      );
+
+      final dataExpectedResult = utf8.encode(expectedResult);
+      final features =
+          json.decode(utf8.decode(dataExpectedResult)) as Map<String, dynamic>;
+
+      expect(
+        sdkInstance.features["testfeature1"]?.rules?[0].condition,
+        equals(features["testfeature1"]?["rules"]?[0]["condition"]),
+      );
+      expect(
+        sdkInstance.features["testfeature1"]?.rules?[0].force,
+        equals(features["testfeature1"]?["rules"]?[0]["force"]),
+      );
+    });
     test(
       '- onInitializationFailure callback test',
       () async {

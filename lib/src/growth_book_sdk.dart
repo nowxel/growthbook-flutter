@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:growthbook_sdk_flutter/src/Utils/crypto.dart';
 
 typedef VoidCallback = void Function();
 
@@ -123,5 +124,18 @@ class GrowthBookSDK extends FeaturesFlowDelegate {
   /// Replaces the Map of user attributes that are used to assign variations
   void setAttributes(Map<String, dynamic> attributes) {
     context.attributes = attributes;
+  }
+
+  void setEncryptedFeatures(String encryptedString, String encryptionKey,
+      [CryptoProtocol? subtle]) {
+    CryptoProtocol crypto = subtle ?? Crypto();
+    var features = crypto.getFeaturesFromEncryptedFeatures(
+      encryptedString,
+      encryptionKey,
+    );
+
+    if (features != null) {
+      _context.features = features;
+    }
   }
 }
