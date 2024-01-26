@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:tuple/tuple.dart';
 
 /// Feature Evaluator Class
 /// Takes Context and Feature Key
@@ -33,18 +36,35 @@ class GBFeatureEvaluator {
           }
         }
 
+        if (GBUtils.isFilteredOut(rule.filters, context.attributes)) {
+          continue;
+        }
+
         /// If rule.force is set
         if (rule.force != null) {
+
           /// If rule.coverage is set
           if (rule.coverage != null) {
             final key = rule.hashAttribute ?? Constant.idAttribute;
-            final attributeValue = context.attributes?[key] as String? ?? '';
+            final attributeValue = context.attributes?[key].toString() ?? '';
 
             if (attributeValue.isEmpty) {
               continue;
             } else {
+              if (!GBUtils.isIncludedInRollout(
+                context.attributes,
+                rule.seed,
+                rule.hashAttribute,
+                rule.range,
+                rule.coverage,
+                rule.hashVersion,
+              )) {
+                continue;
+              }
               // Compute a hash using the Fowler–Noll–Vo algorithm (specifically fnv32-1a)
-              final hashFNV = GBUtils.hash(attributeValue + featureKey);
+              final hashFNV = GBUtils.hash(
+                      value: attributeValue, seed: featureKey, version: 1.0) ??
+                  0.0;
               // If the hash is greater than rule.coverage, skip the rule
 
               if (hashFNV > rule.coverage!) {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:growthbook_sdk_flutter/src/Utils/crypto.dart';
 
 typedef VoidCallback = void Function();
 
@@ -10,6 +11,7 @@ class GBSDKBuilderApp {
   GBSDKBuilderApp({
     required this.hostURL,
     required this.apiKey,
+    this.sseUrl,
     required this.growthBookTrackingCallBack,
     this.attributes = const <String, dynamic>{},
     this.qaMode = false,
@@ -18,12 +20,14 @@ class GBSDKBuilderApp {
     this.client,
     this.gbFeatures = const {},
     this.onInitializationFailure,
+    this.backgroundSync,
   }) : assert(
           hostURL.endsWith('/'),
           'Invalid host url: $hostURL. The hostUrl should be end with `/`, example: `https://example.growthbook.io/`',
         );
 
   final String apiKey;
+  final String? sseUrl;
   final String hostURL;
   final bool enable;
   final bool qaMode;
@@ -33,10 +37,12 @@ class GBSDKBuilderApp {
   final BaseClient? client;
   final GBFeatures gbFeatures;
   final OnInitializationFailure? onInitializationFailure;
+  final bool? backgroundSync;
 
   Future<GrowthBookSDK> initialize() async {
     final gbContext = GBContext(
       apiKey: apiKey,
+      sseUrl: sseUrl,
       hostURL: hostURL,
       enabled: enable,
       qaMode: qaMode,
@@ -44,6 +50,7 @@ class GBSDKBuilderApp {
       forcedVariation: forcedVariations,
       trackingCallBack: growthBookTrackingCallBack,
       features: gbFeatures,
+      backgroundSync: backgroundSync,
     );
     final gb = GrowthBookSDK._(
       context: gbContext,
@@ -97,7 +104,7 @@ class GrowthBookSDK extends FeaturesFlowDelegate {
         context: _context,
       ),
     );
-    await featureViewModel.fetchFeature();
+    await featureViewModel.fetchFeature(context.sseUrl);
   }
 
   GBFeatureResult feature(String id) {
@@ -117,5 +124,18 @@ class GrowthBookSDK extends FeaturesFlowDelegate {
   /// Replaces the Map of user attributes that are used to assign variations
   void setAttributes(Map<String, dynamic> attributes) {
     context.attributes = attributes;
+  }
+
+  void setEncryptedFeatures(String encryptedString, String encryptionKey,
+      [CryptoProtocol? subtle]) {
+    CryptoProtocol crypto = subtle ?? Crypto();
+    var features = crypto.getFeaturesFromEncryptedFeatures(
+      encryptedString,
+      encryptionKey,
+    );
+
+    if (features != null) {
+      _context.features = features;
+    }
   }
 }

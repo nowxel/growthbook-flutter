@@ -26,11 +26,14 @@ void main() {
           final gbContext = GBContext(
               apiKey: '',
               hostURL: '',
+              sseUrl: null,
               enabled: testContext.enabled,
               attributes: attr,
               forcedVariation: testContext.forcedVariations,
               qaMode: testContext.qaMode,
-              trackingCallBack: (_, __) {});
+              trackingCallBack: (_, __) {},
+              backgroundSync: false,
+          );
 
           final result = GBExperimentEvaluator.evaluateExperiment(
               context: gbContext, experiment: experiment);

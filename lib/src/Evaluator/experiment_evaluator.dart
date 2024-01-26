@@ -42,13 +42,20 @@ class GBExperimentEvaluator {
 
     // Get the user hash attribute and value (context.attributes[experiment.hashAttribute || "id"])
     // and if empty, return immediately (not in experiment, variationId 0)
-    final attributeValue =
-        context.attributes?[experiment.hashAttribute ?? Constant.idAttribute];
+    final attributeValue = context
+        .attributes?[experiment.hashAttribute ?? Constant.idAttribute]
+        ?.toString();
     if (attributeValue == null || attributeValue.toString().isEmpty) {
       return _getExperimentResult(
         experiment: experiment,
         gbContext: context,
       );
+    }
+
+    if (experiment.filters != null) {
+      if (GBUtils.isFilteredOut(experiment.filters, context.attributes)) {
+        return _getExperimentResult(gbContext: context, experiment: experiment);
+      }
     }
 
     /// If experiment.namespace is set, check if hash value is included in the
@@ -100,7 +107,9 @@ class GBExperimentEvaluator {
                 .toList()
             : []);
 
-    final hash = GBUtils.hash(attributeValue + experiment.key);
+    final hash = GBUtils.hash(
+            value: attributeValue, seed: experiment.key ?? '', version: 1) ??
+        0.0;
     final assigned = const GBUtils().chooseVariation(hash, bucketRange);
     // If not assigned a variation (assigned === -1), return immediately (not in experiment, variationId 0)
     if (assigned == -1) {

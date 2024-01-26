@@ -2,6 +2,36 @@ const String gbTestCases = r'''
     {
       "evalCondition": [
         [
+              "null condition - null attribute",
+              {"userId": null},
+              {"userId": null},
+              true
+          ],
+          [
+              "null condition - missing attribute",
+              {"userId": null},
+              {},
+              true
+          ],
+          [
+              "null condition - string attribute",
+              {"userId": null},
+              {"userId": "123"},
+              false
+          ],
+          [
+              "null condition - zero attribute",
+              {"userId": null},
+              {"userId": 0},
+              false
+          ],
+          [
+              "null condition - empty string attribute",
+              {"userId": null},
+              {"userId": ""},
+              false
+          ],
+        [
           "$not     - pass",
           {
             "$not": {
@@ -128,6 +158,104 @@ const String gbTestCases = r'''
             }
           },
           true
+        ],
+        [
+            "$groups - match",
+            {
+                "$and": [
+                    {
+                        "$groups": {
+                            "$elemMatch": { "$eq": "a" }
+                        }
+                    },
+                    {
+                        "$groups": {
+                            "$elemMatch": { "$eq": "b" }
+                        }
+                    },
+                    {
+                        "$or": [
+                            {
+                                "$groups": {
+                                    "$elemMatch": { "$eq": "c" }
+                                }
+                            },
+                            {
+                                "$groups": {
+                                    "$elemMatch": { "$eq": "e" }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "$not": {
+                            "$groups": {
+                                "$elemMatch": { "$eq": "f" }
+                            }
+                        }
+                    },
+                    {
+                        "$not": {
+                            "$groups": {
+                                "$elemMatch": { "$eq": "g" }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "$groups": ["a", "b", "c", "d"]
+            },
+            true
+        ],
+        [
+            "$groups - no match",
+            {
+                "$and": [
+                    {
+                        "$groups": {
+                            "$elemMatch": { "$eq": "a" }
+                        }
+                    },
+                    {
+                        "$groups": {
+                            "$elemMatch": { "$eq": "b" }
+                        }
+                    },
+                    {
+                        "$or": [
+                            {
+                                "$groups": {
+                                    "$elemMatch": { "$eq": "c" }
+                                }
+                            },
+                            {
+                                "$groups": {
+                                    "$elemMatch": { "$eq": "e" }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "$not": {
+                            "$groups": {
+                                "$elemMatch": { "$eq": "d" }
+                            }
+                        }
+                    },
+                    {
+                        "$not": {
+                            "$groups": {
+                                "$elemMatch": { "$eq": "g" }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "$groups": ["a", "b", "c", "d"]
+            },
+            false
         ],
         [
           "$and    /$or     - first or true",
@@ -392,6 +520,78 @@ const String gbTestCases = r'''
           false
         ],
         [
+          "$in - not array",
+          {
+            "num": {
+              "$in": 1
+            }
+          },
+          {
+            "num": 1
+          },
+          false
+        ],
+        [
+          "$in - array pass 1",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "e", "a"]
+          },
+          true
+        ],
+        [
+          "$in - array pass 2",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "b", "f"]
+          },
+          true
+        ],
+        [
+          "$in - array pass 3",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "b", "a"]
+          },
+          true
+        ],
+        [
+          "$in - array fail 1",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "e", "f"]
+          },
+          false
+        ],
+        [
+          "$in - array fail 2",
+          {
+            "tags": {
+              "$in": ["a", "b"]
+            }
+          },
+          {
+            "tags": []
+          },
+          false
+        ],
+        [
           "$nin     - pass",
           {
             "num": {
@@ -422,6 +622,78 @@ const String gbTestCases = r'''
             "num": 2
           },
           false
+        ],
+        [
+          "$nin - not array",
+          {
+            "num": {
+              "$nin": 1
+            }
+          },
+          {
+            "num": 1
+          },
+          false
+        ],
+        [
+          "$nin - array fail 1",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "e", "a"]
+          },
+          false
+        ],
+        [
+          "$nin - array fail 2",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "b", "f"]
+          },
+          false
+        ],
+        [
+          "$nin - array fail 3",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "b", "a"]
+          },
+          false
+        ],
+        [
+          "$nin - array pass 1",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": ["d", "e", "f"]
+          },
+          true
+        ],
+        [
+          "$nin - array pass 2",
+          {
+            "tags": {
+              "$nin": ["a", "b"]
+            }
+          },
+          {
+            "tags": []
+          },
+          true
         ],
         [
           "$elemMatch     - pass - flat arrays",
@@ -476,6 +748,46 @@ const String gbTestCases = r'''
           false
         ],
         [
+            "missing attribute with comparison operators",
+            {
+                "age": {
+                    "$gt": -10,
+                    "$lt": 10,
+                    "$gte": -9,
+                    "$lte": 9,
+                    "$ne": 10
+                }
+            },
+            {},
+            true
+        ],
+        [
+            "comparing numbers and strings",
+            {
+                "n": {
+                    "$gt": 5,
+                    "$lt": 10
+                }
+            },
+            {
+                "n": "8"
+            },
+            true
+        ],
+        [
+            "comparing numbers and strings - v2",
+            {
+                "n": {
+                    "$gt": "5",
+                    "$lt": "10"
+                }
+            },
+            {
+                "n": 8
+            },
+            true
+        ],
+        [
           "empty $or     - pass",
           {
             "$or": [
@@ -520,6 +832,150 @@ const String gbTestCases = r'''
             "occupation": "engineer"
           },
           true
+        ],
+        [
+          "$veq     - pass",
+            {
+            "version": {
+               "$veq": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            true
+        ],
+        [
+          "$veq     - fail",
+            {
+            "version": {
+               "$veq": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1-    2-    3-rc-    2"
+            },
+            false
+        ],
+        [
+          "$vne     - pass",
+            {
+            "version": {
+               "$vne": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.3.4-rc.3"
+            },
+            true
+        ],
+        [
+          "$vne     - fail",
+            {
+            "version": {
+               "$vne": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            false
+        ],
+        [
+          "$vgt     - pass",
+            {
+            "version": {
+               "$vgt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.4-rc.0"
+            },
+            true
+        ],
+        [
+          "$vgt     - fail",
+            {
+            "version": {
+               "$vgt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.2-rc.0"
+            },
+            false
+        ],
+        [
+          "$vgte     - pass",
+            {
+            "version": {
+               "$vgte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            true
+        ],
+        [
+          "$vgte     - fail",
+            {
+            "version": {
+               "$vgte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.2-rc.1"
+            },
+            false
+        ],
+        [
+          "$vlt     - pass",
+            {
+            "version": {
+               "$vlt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.2-rc.1"
+            },
+            true
+        ],
+        [
+          "$vlt     - fail",
+            {
+            "version": {
+               "$vlt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.4-rc.1"
+            },
+            false
+        ],
+        [
+          "$vlte     - pass",
+            {
+            "version": {
+               "$vlte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            true
+        ],
+        [
+          "$vlte     - fail",
+            {
+            "version": {
+               "$vlte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.4-rc.1"
+            },
+            false
         ],
         [
           "$eq     - fail",
@@ -1062,6 +1518,34 @@ const String gbTestCases = r'''
       false
     ],
         [
+         "$elemMatch intersection - pass",
+          {
+            "tags": {
+              "$elemMatch": {
+                "$in": ["a", "b"]
+              }
+            }
+          },
+          {
+            "tags": ["d", "e", "b"]
+          },
+          true
+        ],
+        [
+          "$elemMatch intersection - fail",
+          {
+            "tags": {
+              "$elemMatch": {
+                "$in": ["a", "b"]
+              }
+            }
+          },
+          {
+            "tags": ["d", "e", "f"]
+          },
+          false
+        ],
+        [
           "$elemMatch     nested - pass",
           {
             "hobbies": {
@@ -1423,31 +1907,57 @@ const String gbTestCases = r'''
       "hash": [
         [
           "a",
-          0.22
+          0.22,
+          1,
+          ""
         ],
         [
           "b",
-          0.077
+          0.077,
+          1,
+          ""
         ],
         [
           "ab",
-          0.946
+          0.946,
+          1,
+          ""
         ],
         [
           "def",
-          0.652
+          0.652,
+          1,
+          ""
         ],
         [
           "8952klfjas09ujkasdf",
-          0.549
+          0.549,
+          1,
+          ""
         ],
         [
           "123",
-          0.011
+          0.011,
+          1,
+          ""
         ],
         [
           "___)((*\":&",
-          0.563
+          0.563,
+          1,
+          ""
+        ],
+        [
+          "a",
+          0.0505,
+          2,
+          "seed"
+        ],
+        [
+          "def",
+          null,
+          99,
+          "abc"
         ]
       ],
       "getBucketRange": [
@@ -1846,6 +2356,32 @@ const String gbTestCases = r'''
             "off": false,
             "source": "force"
           }
+        ],
+        [
+            "force rule - coverage with integer hash attribute",
+            {
+                "attributes": {
+                    "id": 3
+                },
+                "features": {
+                    "feature": {
+                        "defaultValue": 2,
+                        "rules": [
+                            {
+                                "force": 1,
+                                "coverage": 0.5
+                            }
+                        ]
+                    }
+                }
+            },
+            "feature",
+            {
+                "value": 1,
+                "on": true,
+                "off": false,
+                "source": "force"
+            }
         ],
         [
           "force rules - coverage excluded",
@@ -2384,6 +2920,44 @@ const String gbTestCases = r'''
           }
         ],
        
+        [
+          "handles integer hashAttribute",
+          {
+            "attributes": { "id": 123 },
+            "features": {
+              "feature": {
+                "defaultValue": 0,
+                "rules": [
+                  {
+                    "variations": [0, 1]
+                  }
+                ]
+              }
+            }
+          },
+          "feature",
+          {
+            "value": 1,
+            "on": true,
+            "off": false,
+            "source": "experiment",
+            "experiment": {
+              "key": "feature",
+              "variations": [0, 1]
+            },
+            "experimentResult": {
+              "featureId": "feature",
+              "hashAttribute": "id",
+              "hashValue": 123,
+              "hashUsed": true,
+              "inExperiment": true,
+              "value": 1,
+              "variationId": 1,
+              "key": "1",
+              "bucket": 0.863
+            }
+          }
+        ],
         [
           "skip experiment on missing hashAttribute",
           {
@@ -3218,6 +3792,24 @@ const String gbTestCases = r'''
           false
         ],
         [
+          "null id",
+          {
+            "attributes": {
+              "id": null
+            }
+          },
+          {
+            "key": "my-test",
+            "variations": [
+              0,
+              1
+            ]
+          },
+          0,
+          false,
+          false
+        ],
+        [
           "missing id",
           {
             "attributes": {
@@ -3597,6 +4189,22 @@ const String gbTestCases = r'''
               0,
               0.1
             ]
+          },
+          0,
+          false,
+          false
+          ],
+        [
+          "Experiment coverage - Works when 0",
+          {
+            "attributes": {
+              "id": "1"
+            }
+          },
+          {
+            "key": "no-coverage",
+            "variations": [0, 1],
+            "coverage": 0
           },
           0,
           false,
@@ -4009,6 +4617,68 @@ const String gbTestCases = r'''
             0.25
           ]
         ]
-      ]
+      ],
+      "decrypt": [
+          [
+            "Valid feature",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            "{\"feature\":{\"defaultValue\":true}}"
+          ],
+          [
+            "Broken JSON",
+            "SVZIM2oKD1JoHNIeeoW3Uw==.AGbRiGAHf2f6/ziVr9UTIy+bVFmVli6+bHZ2jnCm9N991ITv1ROvOEjxjLSmgEpv",
+            "UQD0Qqw7fM1bhfKKPH8TGw==",
+            "{\"feature\":{\"defaultValue\":true?5%"
+          ],
+          [
+            "Wrong key",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX39Yjg==",
+            null
+          ],
+          [
+            "Invalid key length",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznSX39Yjg==",
+            null
+          ],
+          [
+            "Invalid key characters",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/%!(pFDznZ6SX39Yjg==",
+            null
+          ],
+          [
+            "Invalid body",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q0!*&()f3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ],
+          [
+            "Invalid iv length",
+            "m5ylFM6ndyOPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ],
+          [
+            "Invalid iv",
+            "m5ylFM6*&(OJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ],
+          [
+            "Missing delimiter",
+            "m5ylFM6ndyOJA2OPadubkw==Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ],
+          [
+            "Corrupted payload",
+            "fsa*(&(SF*&F&SF^SD&*FS&*6fsdkajfd",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ]
+        ]
     }
 ''';
