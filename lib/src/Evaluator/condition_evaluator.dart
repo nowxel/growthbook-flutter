@@ -276,15 +276,17 @@ class GBConditionEvaluator {
   ///  conditionValue.
   bool evalOperatorCondition(
       String operator, dynamic attributeValue, dynamic conditionValue) {
-    /// Evaluate TYPE operator - whether both are of same type
+    /// Evaluate TYPE operator - whether both are of the same type
     if (operator == "\$type") {
       return getType(attributeValue).name == conditionValue;
     }
-    // Evaluate NOT operator - whether condition doesn't contain attribute
+
+    /// Evaluate NOT operator - whether condition doesn't contain attribute
     if (operator == "\$not") {
       return !evalConditionValue(conditionValue, attributeValue);
     }
-    // Evaluate EXISTS operator - whether condition contains attribute
+
+    /// Evaluate EXISTS operator - whether condition contains attribute
     if (operator == "\$exists") {
       if (conditionValue.toString() == 'false' && attributeValue == null) {
         return true;
@@ -323,7 +325,6 @@ class GBConditionEvaluator {
                 return result;
               }
             }
-
             return true;
           } else {
             /// If attributeValue is not an array, return false
@@ -341,126 +342,84 @@ class GBConditionEvaluator {
         /// Evaluate SIE operator - whether condition size is same as that
         /// of attribute
         case "\$size":
-          return evalConditionValue(
-            conditionValue,
-            (attributeValue).length,
-          );
+          return evalConditionValue(conditionValue, attributeValue.length);
 
         default:
       }
     } else if ((attributeValue as Object?).isPrimitive &&
         (conditionValue as Object?).isPrimitive) {
+      final targetPrimitiveValue = double.tryParse(conditionValue.toString());
+      final sourcePrimitiveValue = double.tryParse(attributeValue.toString());
+      final paddedVersionTarget =
+          GBUtils.paddedVersionString(conditionValue.toString());
+      final paddedVersionSource =
+          GBUtils.paddedVersionString(attributeValue?.toString() ?? '0.0');
+
       /// If condition is bool.
-      if (conditionValue.isBoolean && attributeValue.isBoolean) {
-        bool evaluatedValue = false;
-        switch (operator) {
-          case "\$eq":
-            evaluatedValue = conditionValue == attributeValue;
-            break;
-          case "\$ne":
-            evaluatedValue = conditionValue != attributeValue;
-            break;
-        }
-        return evaluatedValue;
+      bool evaluatedValue = false;
+      switch (operator) {
+        case "\$eq":
+          evaluatedValue = conditionValue == attributeValue;
+          break;
+        case "\$ne":
+          evaluatedValue = conditionValue != attributeValue;
+          break;
+        case "\$veq":
+          return paddedVersionSource == paddedVersionTarget;
+        case "\$vne":
+          return paddedVersionSource != paddedVersionTarget;
+        case "\$vgt":
+          return paddedVersionSource > paddedVersionTarget;
+        case "\$vgte":
+          return paddedVersionSource >= paddedVersionTarget;
+        case "\$vlt":
+          return paddedVersionSource < paddedVersionTarget;
+        case "\$vlte":
+          return paddedVersionSource <= paddedVersionTarget;
+
+        /// Evaluate LT operator - whether attribute less than to condition
+        case '\$lt':
+          if (conditionValue is String && attributeValue is String) {
+            return attributeValue.compareTo(conditionValue) < 0;
+          }
+          evaluatedValue =
+              (sourcePrimitiveValue ?? 0.0) < targetPrimitiveValue!;
+          break;
+
+        /// Evaluate LTE operator - whether attribute less than or equal to condition
+        case '\$lte':
+          evaluatedValue =
+              (sourcePrimitiveValue ?? 0.0) <= targetPrimitiveValue!;
+          break;
+
+        /// Evaluate GT operator - whether attribute greater than to condition
+        case '\$gt':
+          if (conditionValue is String && attributeValue is String) {
+            return attributeValue.compareTo(conditionValue) > 0;
+          }
+          evaluatedValue =
+              (sourcePrimitiveValue ?? 0.0) > targetPrimitiveValue!;
+          break;
+
+        case '\$gte':
+          evaluatedValue =
+              (sourcePrimitiveValue ?? 0.0) >= targetPrimitiveValue!;
+          break;
+
+        case '\$regex':
+          try {
+            final regEx = RegExp(conditionValue.toString());
+            evaluatedValue = regEx.hasMatch(attributeValue.toString());
+          } catch (e) {
+            evaluatedValue = false;
+          }
+          break;
+
+        default:
+          conditionValue = false;
       }
-
-      /// If condition is num.
-      if (conditionValue.isNumber && attributeValue.isNumber) {
-        conditionValue as num;
-        attributeValue as num;
-        bool evaluatedValue = false;
-        switch (operator) {
-          /// Evaluate EQ operator - whether condition equals to attribute
-          case '\$eq':
-            evaluatedValue = conditionValue == attributeValue;
-            break;
-
-          /// Evaluate NE operator - whether condition doesn't equal to attribute
-          case '\$ne':
-            evaluatedValue = conditionValue != attributeValue;
-            break;
-          // Evaluate LT operator - whether attribute less than to condition
-          case '\$lt':
-            evaluatedValue = attributeValue < conditionValue;
-            break;
-
-          /// Evaluate LTE operator - whether attribute less than or equal to condition
-          case '\$lte':
-            evaluatedValue = attributeValue <= conditionValue;
-            break;
-          // Evaluate GT operator - whether attribute greater than to condition
-          case '\$gt':
-            evaluatedValue = attributeValue > conditionValue;
-            break;
-          case '\$gte':
-            evaluatedValue = attributeValue >= conditionValue;
-            break;
-          default:
-            conditionValue = false;
-        }
-        return evaluatedValue;
-      }
-
-      if (conditionValue.isString && attributeValue.isString) {
-        bool evaluatedValue = false;
-        conditionValue as String;
-        attributeValue as String;
-        final paddedVersionTarget = GBUtils.paddedVersionString(conditionValue);
-        final paddedVersionSource = GBUtils.paddedVersionString(attributeValue);
-        switch (operator) {
-          case "\$veq":
-            return paddedVersionSource == paddedVersionTarget;
-          case "\$vne":
-            return paddedVersionSource != paddedVersionTarget;
-          case "\$vgt":
-            return paddedVersionSource > paddedVersionTarget;
-          case "\$vgte":
-            return paddedVersionSource >= paddedVersionTarget;
-          case "\$vlt":
-            return paddedVersionSource < paddedVersionTarget;
-          case "\$vlte":
-            return paddedVersionSource <= paddedVersionTarget;
-
-          /// Evaluate EQ operator - whether condition equals to attribute
-          case '\$eq':
-            evaluatedValue = conditionValue == attributeValue;
-            break;
-
-          /// Evaluate NE operator - whether condition doesn't equal to attribute
-          case '\$ne':
-            evaluatedValue = conditionValue != attributeValue;
-            break;
-          // Evaluate LT operator - whether attribute less than to condition
-          case '\$lt':
-            evaluatedValue = attributeValue < conditionValue;
-            break;
-
-          /// Evaluate LTE operator - whether attribute less than or equal to condition
-          case '\$lte':
-            evaluatedValue = attributeValue <= conditionValue;
-            break;
-          // Evaluate GT operator - whether attribute greater than to condition
-          case '\$gt':
-            evaluatedValue = attributeValue > conditionValue;
-            break;
-          case '\$gte':
-            evaluatedValue = attributeValue >= conditionValue;
-            break;
-          case '\$regex':
-            try {
-              final regEx = RegExp(conditionValue.toString());
-              evaluatedValue = regEx.hasMatch(attributeValue.toString());
-            } catch (e) {
-              evaluatedValue = false;
-            }
-            break;
-          default:
-            conditionValue = false;
-        }
-        return evaluatedValue;
-      }
+      return evaluatedValue;
     }
-
     return false;
   }
 

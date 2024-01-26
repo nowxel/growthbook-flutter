@@ -728,6 +728,46 @@ const String gbTestCases = r'''
           false
         ],
         [
+            "missing attribute with comparison operators",
+            {
+                "age": {
+                    "$gt": -10,
+                    "$lt": 10,
+                    "$gte": -9,
+                    "$lte": 9,
+                    "$ne": 10
+                }
+            },
+            {},
+            true
+        ],
+        [
+            "comparing numbers and strings",
+            {
+                "n": {
+                    "$gt": 5,
+                    "$lt": 10
+                }
+            },
+            {
+                "n": "8"
+            },
+            true
+        ],
+        [
+            "comparing numbers and strings - v2",
+            {
+                "n": {
+                    "$gt": "5",
+                    "$lt": "10"
+                }
+            },
+            {
+                "n": 8
+            },
+            true
+        ],
+        [
           "empty $or     - pass",
           {
             "$or": [
