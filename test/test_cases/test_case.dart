@@ -3415,6 +3415,22 @@ const String gbTestCases = r'''
           },
           0,
           false
+          ],
+        [
+          "Experiment coverage - Works when 0",
+          {
+            "attributes": {
+              "id": "1"
+            }
+          },
+          {
+            "key": "no-coverage",
+            "variations": [0, 1],
+            "coverage": 0
+          },
+          0,
+          false,
+          false
         ]
       ],
       "chooseVariation": [
