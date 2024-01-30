@@ -38,13 +38,15 @@ class GBFeatureEvaluator {
           /// If rule.coverage is set
           if (rule.coverage != null) {
             final key = rule.hashAttribute ?? Constant.idAttribute;
-            final attributeValue = context.attributes?[key] as String? ?? '';
+            final attributeValue = context.attributes?[key].toString() ?? '';
 
             if (attributeValue.isEmpty) {
               continue;
             } else {
               // Compute a hash using the Fowler–Noll–Vo algorithm (specifically fnv32-1a)
-              final hashFNV = GBUtils.hash(attributeValue + featureKey);
+              final hashFNV = GBUtils.hash(
+                      value: attributeValue, seed: featureKey, version: 1.0) ??
+                  0.0;
               // If the hash is greater than rule.coverage, skip the rule
 
               if (hashFNV > rule.coverage!) {
