@@ -52,6 +52,12 @@ class GBExperimentEvaluator {
       );
     }
 
+    if (experiment.filters != null) {
+      if (GBUtils.isFilteredOut(experiment.filters, context.attributes)) {
+        return _getExperimentResult(gbContext: context, experiment: experiment);
+      }
+    }
+
     /// If experiment.namespace is set, check if hash value is included in the
     ///  range and if not, return immediately (not in experiment, variationId 0)
     if (experiment.namespace != null) {

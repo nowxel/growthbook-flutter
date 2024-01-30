@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:growthbook_sdk_flutter/src/Utils/utils.dart';
 
 /// Fowler-Noll-Vo hash - 32 bit
@@ -24,6 +26,9 @@ class FNV {
 /// - getBucketRanges
 /// - chooseVariation
 /// - getGBNameSpace
+/// - inRange
+/// - isFilteredOut
+/// - isIncludedInRollout
 class GBUtils {
   const GBUtils();
 
@@ -138,5 +143,67 @@ class GBUtils {
     }
 
     return null;
+  }
+
+  /// Determines if a number n is within the provided range.
+  static bool inRange(double? n, GBBucketRange? range) {
+    return n != null && range != null && n >= range.item1 && n < range.item2;
+  }
+
+  /// This is a helper method to evaluate filters for both feature flags and experiments.
+  static bool isFilteredOut(List<GBFilter>? filters, dynamic attributes) {
+    if (filters == null) return false;
+    if (attributes == null) return false;
+    return filters.any((filter) {
+      String hashAttribute = filter.attribute ?? "id";
+      dynamic hashValueElement = attributes[hashAttribute];
+      if (hashValueElement == null) return true;
+
+      if (!(hashValueElement is int ||
+          hashValueElement is double ||
+          hashValueElement is String ||
+          hashValueElement is bool)) {
+        return true;
+      }
+
+      String hashValue = hashValueElement.toString();
+      if (hashValue.isEmpty) return true;
+      int hashVersion = filter.hashVersion ?? 2;
+      final n = hash(
+          value: hashValue, version: hashVersion.toDouble(), seed: filter.seed);
+      if (n == null) return true;
+      final ranges = filter.ranges;
+      return ranges.every((range) => !inRange(n, range));
+    });
+  }
+
+  /// Determines if the user is part of a gradual feature rollout.
+  static bool isIncludedInRollout(
+    dynamic attributes,
+    String? seed,
+    String? hashAttribute,
+    GBBucketRange? range,
+    double? coverage,
+    int? hashVersion,
+  ) {
+    String? latestHashAttribute = hashAttribute;
+    int? latestHashVersion = hashVersion;
+    if (range == null && coverage == null) return true;
+    if (hashAttribute == null || hashAttribute == '') {
+      latestHashAttribute = 'id';
+    }
+    if (attributes == null) return false;
+    dynamic hashValueElement = jsonEncode(attributes[latestHashAttribute]);
+    if (hashValueElement == null) return false;
+    if (hashVersion == null) {
+      latestHashVersion = 1;
+    }
+    String hashValue = jsonEncode(hashValueElement);
+    final hashResult = hash(
+        value: hashValue,
+        version: latestHashVersion!.toDouble(),
+        seed: seed ?? '');
+    if (hashResult == null) return false;
+    return range != null ? inRange(hashResult, range) : hashResult <= coverage!;
   }
 }

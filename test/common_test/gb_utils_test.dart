@@ -22,8 +22,14 @@ void main() {
       for (final item in evaluateCondition) {
         final testContext = item[0];
         final experiment = item[1];
+        final hashVersion = double.parse(item[2].toString());
+        final seed = item[3];
 
-        final result = GBUtils.hash(seed: '', value: testContext, version: 1);
+        final result = GBUtils.hash(
+          value: testContext,
+          version: hashVersion,
+          seed: seed,
+        );
 
         final status = item[0].toString() +
             '\nExpected Result - ' +
