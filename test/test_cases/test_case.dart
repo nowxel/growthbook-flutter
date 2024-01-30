@@ -532,6 +532,150 @@ const String gbTestCases = r'''
           true
         ],
         [
+          "$veq     - pass",
+            {
+            "version": {
+               "$veq": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            true
+        ],
+        [
+          "$veq     - fail",
+            {
+            "version": {
+               "$veq": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1-    2-    3-rc-    2"
+            },
+            false
+        ],
+        [
+          "$vne     - pass",
+            {
+            "version": {
+               "$vne": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.3.4-rc.3"
+            },
+            true
+        ],
+        [
+          "$vne     - fail",
+            {
+            "version": {
+               "$vne": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            false
+        ],
+        [
+          "$vgt     - pass",
+            {
+            "version": {
+               "$vgt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.4-rc.0"
+            },
+            true
+        ],
+        [
+          "$vgt     - fail",
+            {
+            "version": {
+               "$vgt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.2-rc.0"
+            },
+            false
+        ],
+        [
+          "$vgte     - pass",
+            {
+            "version": {
+               "$vgte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            true
+        ],
+        [
+          "$vgte     - fail",
+            {
+            "version": {
+               "$vgte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.2-rc.1"
+            },
+            false
+        ],
+        [
+          "$vlt     - pass",
+            {
+            "version": {
+               "$vlt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.2-rc.1"
+            },
+            true
+        ],
+        [
+          "$vlt     - fail",
+            {
+            "version": {
+               "$vlt": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.4-rc.1"
+            },
+            false
+        ],
+        [
+          "$vlte     - pass",
+            {
+            "version": {
+               "$vlte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.3-rc.1"
+            },
+            true
+        ],
+        [
+          "$vlte     - fail",
+            {
+            "version": {
+               "$vlte": "v1.2.3-rc.1+build123"
+            }
+            },
+            {
+               "version": "1.2.4-rc.1"
+            },
+            false
+        ],
+        [
           "$eq     - fail",
           {
             "occupation": {
@@ -3959,6 +4103,68 @@ const String gbTestCases = r'''
             0.25
           ]
         ]
-      ]
+      ],
+      "decrypt": [
+          [
+            "Valid feature",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            "{\"feature\":{\"defaultValue\":true}}"
+          ],
+          [
+            "Broken JSON",
+            "SVZIM2oKD1JoHNIeeoW3Uw==.AGbRiGAHf2f6/ziVr9UTIy+bVFmVli6+bHZ2jnCm9N991ITv1ROvOEjxjLSmgEpv",
+            "UQD0Qqw7fM1bhfKKPH8TGw==",
+            "{\"feature\":{\"defaultValue\":true?5%"
+          ],
+          [
+            "Wrong key",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX39Yjg==",
+            null
+          ],
+          [
+            "Invalid key length",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznSX39Yjg==",
+            null
+          ],
+          [
+            "Invalid key characters",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/%!(pFDznZ6SX39Yjg==",
+            null
+          ],
+          [
+            "Invalid body",
+            "m5ylFM6ndyOJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q0!*&()f3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ],
+          [
+            "Invalid iv length",
+            "m5ylFM6ndyOPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ],
+          [
+            "Invalid iv",
+            "m5ylFM6*&(OJA2OPadubkw==.Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ],
+          [
+            "Missing delimiter",
+            "m5ylFM6ndyOJA2OPadubkw==Uu7ViqgKEt/dWvCyhI46q088PkAEJbnXKf3KPZjf9IEQQ+A8fojNoxw4wIbPX3aj",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ],
+          [
+            "Corrupted payload",
+            "fsa*(&(SF*&F&SF^SD&*FS&*6fsdkajfd",
+            "Zvwv/+uhpFDznZ6SX28Yjg==",
+            null
+          ]
+        ]
     }
 ''';

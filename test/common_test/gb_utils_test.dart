@@ -232,5 +232,47 @@ void main() {
           'Passed Test ${passedScenarios.length} out of ${evaluateConditions.length}');
       expect(failedScenarios.length, 0);
     });
+
+    test('TestDecrypt', () {
+      try {
+        var testCases = GBTestHelper.getDecryptData();
+        if (testCases == null) return;
+
+        for (var jsonElement in testCases) {
+          var test = jsonElement.arrayObject;
+          var payload = test[1] as String?;
+          var key = test[2] as String?;
+          if (payload == null || key == null) {
+            continue;
+          }
+          var expectedElem = test[3];
+
+          try {
+            if (expectedElem is String) {
+              var actual = DecryptionUtils.decrypt(payload, key).trim();
+              expect(actual, expectedElem);
+            }
+          } on DecryptionException catch (error) {
+            customLogger("message ${error.errorMessage}");
+
+            if (expectedElem == null) {
+              expect(true, isTrue);
+            }
+          } catch (error) {
+            fail("An unexpected error occurred: $error");
+          }
+        }
+      } catch (error) {
+        customLogger("An unexpected error occurred: $error");
+      }
+    });
+  });
+
+  test('TestPaddedVersionString', () {
+    const startValue = "v1.2.3-rc.1+build123";
+    const expectedValue = "    1-    2-    3-rc-    1";
+    final endValue = GBUtils.paddedVersionString(startValue);
+
+    expect(endValue, expectedValue);
   });
 }

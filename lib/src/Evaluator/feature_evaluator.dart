@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:tuple/tuple.dart';
 
 /// Feature Evaluator Class
 /// Takes Context and Feature Key
@@ -39,6 +42,7 @@ class GBFeatureEvaluator {
 
         /// If rule.force is set
         if (rule.force != null) {
+
           /// If rule.coverage is set
           if (rule.coverage != null) {
             final key = rule.hashAttribute ?? Constant.idAttribute;

@@ -24,6 +24,10 @@ class GBTestHelper {
     return testData['feature'];
   }
 
+  static List? getDecryptData() {
+    return testData?['decrypt']?.toList();
+  }
+
   static List getBucketRangeData() {
     return testData['getBucketRange'];
   }
