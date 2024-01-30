@@ -3,11 +3,12 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:growthbook_sdk_flutter/src/Cache/caching_manager.dart';
 import 'package:growthbook_sdk_flutter/src/Network/see_client.dart';
 import 'package:growthbook_sdk_flutter/src/Utils/crypto.dart';
 
 class FeatureViewModel {
-  const FeatureViewModel({
+  FeatureViewModel({
     required this.delegate,
     required this.source,
     this.encryptionKey,
@@ -17,6 +18,9 @@ class FeatureViewModel {
   final FeatureDataSource source;
   final String? encryptionKey;
   final bool? backgroundSync;
+
+  // Caching Manager
+  final CachingManager manager = CachingManager();
 
   Future<void> fetchFeature(String? sseURL) async {
     if (sseURL != null) {
@@ -71,32 +75,41 @@ class FeatureViewModel {
   }
 
   void prepareFeaturesData(dynamic data) {
-  try {
-    final Map<String, dynamic>? jsonPetitions = jsonDecode(data);
+    try {
+      final Map<String, dynamic>? jsonPetitions = jsonDecode(data);
 
-    switch (jsonPetitions) {
-      case null:
-        log("JSON is null.");
+      switch (jsonPetitions) {
+        case null:
+          log("JSON is null.");
+          break;
+
+        default:
+          final features = jsonPetitions!["features"];
+          final hasFeaturesKey = jsonPetitions.containsKey("features");
+
+          hasFeaturesKey
+              ? handleValidFeatures(features)
+              : log("Missing 'features' key.");
+
+          break;
+      }
+    } catch (e, s) {
+      handleException(e, s);
+    }
+  }
+
+  void handleValidFeatures(dynamic features) {
+    switch (features) {
+      case Map<String, GBFeature>:
+        delegate.featuresFetchedSuccessfully(features);
+
+        final featureData = utf8.encode(jsonEncode(features));
+        manager.putData(Constant.featureCache, featureData);
         break;
 
       default:
-        final features = jsonPetitions!["features"];
-        final hasFeaturesKey = jsonPetitions.containsKey("features");
-
-        hasFeaturesKey
-            ? handleValidFeatures(features)
-            : log("Missing 'features' key.");
-
-        break;
+        handleInvalidFeatures(features);
     }
-  } catch (e, s) {
-    handleException(e, s);
-  }
-}
-
-
-void handleValidFeatures(Map<String, GBFeature> features) {
-    delegate.featuresFetchedSuccessfully(features);
   }
 
   void handleInvalidFeatures(Map<String, dynamic>? jsonPetitions) {
@@ -123,6 +136,8 @@ void handleValidFeatures(Map<String, GBFeature> features) {
 
       if (extractedFeatures != null) {
         delegate.featuresFetchedSuccessfully(extractedFeatures);
+        final featureData = utf8.encode(jsonEncode(extractedFeatures));
+        manager.putData(Constant.featureCache, featureData);
       } else {
         logError("Failed to extract features from encrypted string.");
       }
