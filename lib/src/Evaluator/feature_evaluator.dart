@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:qioqioqr/qioqioqr.dart';
 import 'package:tuple/tuple.dart';
 
 /// Feature Evaluator Class

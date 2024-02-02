@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:qioqioqr/qioqioqr.dart';
 
 void main() async {
   runApp(const MyApp());

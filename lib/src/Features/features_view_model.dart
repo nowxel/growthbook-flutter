@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
-import 'package:growthbook_sdk_flutter/src/Cache/caching_manager.dart';
-import 'package:growthbook_sdk_flutter/src/Network/see_client.dart';
-import 'package:growthbook_sdk_flutter/src/Utils/crypto.dart';
+import 'package:qioqioqr/qioqioqr.dart';
+import 'package:qioqioqr/src/Cache/caching_manager.dart';
+import 'package:qioqioqr/src/Network/see_client.dart';
+import 'package:qioqioqr/src/Utils/crypto.dart';
 
 class FeatureViewModel {
   FeatureViewModel({

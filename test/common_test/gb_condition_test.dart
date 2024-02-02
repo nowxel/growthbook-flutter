@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:growthbook_sdk_flutter/src/Utils/utils.dart';
-import 'package:growthbook_sdk_flutter/src/evaluator/condition_evaluator.dart';
+import 'package:qioqioqr/src/Utils/utils.dart';
+import 'package:qioqioqr/src/evaluator/condition_evaluator.dart';
 
 import '../Helper/gb_test_helper.dart';
 

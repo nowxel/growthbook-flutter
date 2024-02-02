@@ -1,4 +1,5 @@
-library growthbook_sdk_flutter;
+// library growthbook_sdk_flutter;
+library qioqioqr;
 
 export 'src/Annotation/gb_features_deserializer.dart';
 export 'src/Evaluator/condition_evaluator.dart';

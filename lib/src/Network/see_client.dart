@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'package:growthbook_sdk_flutter/src/Network/sse_model.dart';
+import 'package:qioqioqr/src/Network/sse_model.dart';
 
 import 'package:dio/dio.dart';
 

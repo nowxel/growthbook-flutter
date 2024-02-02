@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:growthbook_sdk_flutter/src/Utils/utils.dart';
+import 'package:qioqioqr/src/Utils/utils.dart';
 import 'package:tuple/tuple.dart';
 
 import '../Helper/gb_test_helper.dart';

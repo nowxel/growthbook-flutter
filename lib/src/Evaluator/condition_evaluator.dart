@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:qioqioqr/qioqioqr.dart';
 
 /// Both experiments and features can define targeting conditions using a syntax modeled after MongoDB queries.
 /// These conditions can have arbitrary nesting levels and evaluating them requires recursion.

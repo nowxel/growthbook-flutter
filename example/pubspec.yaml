@@ -29,7 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  growthbook_sdk_flutter:
+  qioqioqr:
     path: ../
 
 

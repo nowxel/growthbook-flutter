@@ -1,4 +1,4 @@
-import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
+import 'package:qioqioqr/qioqioqr.dart';
 
 class DataSourceMock extends FeaturesFlowDelegate {
   /// For data response.

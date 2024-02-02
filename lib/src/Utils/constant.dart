@@ -1,6 +1,6 @@
-import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
-import 'package:growthbook_sdk_flutter/src/Utils/converter.dart';
+import 'package:qioqioqr/qioqioqr.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:qioqioqr/src/Utils/converter.dart';
 import 'package:tuple/tuple.dart';
 
 part 'constant.g.dart';

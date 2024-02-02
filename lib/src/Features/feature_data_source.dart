@@ -1,5 +1,5 @@
-import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
-import 'package:growthbook_sdk_flutter/src/Utils/feature_url_builder.dart';
+import 'package:qioqioqr/qioqioqr.dart';
+import 'package:qioqioqr/src/Utils/feature_url_builder.dart';
 
 typedef FeatureFetchSuccessCallBack = void Function(
   FeaturedDataModel featuredDataModel,
