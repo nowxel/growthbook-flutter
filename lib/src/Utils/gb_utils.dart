@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:growthbook_sdk_flutter/src/Utils/utils.dart';
+import 'package:qioqioqr/src/Utils/utils.dart';
 
 /// Fowler-Noll-Vo hash - 32 bit
 class FNV {

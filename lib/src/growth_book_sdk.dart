@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
-import 'package:growthbook_sdk_flutter/src/Utils/crypto.dart';
+import 'package:qioqioqr/qioqioqr.dart';
+import 'package:qioqioqr/src/Utils/crypto.dart';
 
 typedef VoidCallback = void Function();
 
