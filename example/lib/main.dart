@@ -132,7 +132,6 @@ class CircleTabIndicator extends Decoration {
 class _CirclePainter extends BoxPainter {
   final Paint _paint;
   final double radius;
-
   _CirclePainter(Color color, this.radius)
       : _paint = Paint()
           ..color = color
