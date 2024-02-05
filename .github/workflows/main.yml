@@ -1,5 +1,8 @@
 on:
-  release:
+  # release:
+  #   branches:
+  #     - main
+  push:
     branches:
       - main
 jobs:
