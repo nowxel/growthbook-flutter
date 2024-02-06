@@ -28,6 +28,6 @@ jobs:
         uses: k-paxian/dart-package-publisher@master
         with:
           accessToken: ${{ secrets.TOKEN }}
-          refreshToken: ${{ secrets.TOKEN }}
+          refreshToken: ${{ empty }}
           flutter: true
           skipTests: true
