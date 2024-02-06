@@ -1,3 +1,9 @@
+## 3.4.0+0
+- Fixes [issue](https://github.com/alippo-com/GrowthBook-SDK-Flutter/issues)
+
+## 3.3.0+0
+- Fixes [issue](https://github.com/alippo-com/GrowthBook-SDK-Flutter/issues)
+
 ## 3.2.0+0
 - Fixes [issue](https://github.com/alippo-com/GrowthBook-SDK-Flutter/issues)
 
