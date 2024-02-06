@@ -25,9 +25,8 @@ jobs:
       - name: Check Publish Warnings
         run: dart pub publish --dry-run
       - name: Publish
-        run: dart pub publish --force
-        # with:
-        #   accessToken: ${{ secrets.TOKEN }}
-        #   refreshToken: ${{ secrets.TOKEN }}
-        #   flutter: true
-        #   skipTests: true
+        uses: k-paxian/dart-package-publisher@master
+        with:
+          credentialJson: ${{ secrets.CREDENTIAL_JSON }}
+          flutter: true
+          skipTests: true
