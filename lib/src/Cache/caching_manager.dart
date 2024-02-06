@@ -1,3 +1,6 @@
+// ignore_for_file: unnecessary_null_comparison
+
+import 'dart:developer';
 import 'dart:io';
 
 enum CacheDirectory {
@@ -38,8 +41,7 @@ class CachingManager {
   }
 
   String getTargetFile(String fileName) {
-    String? directoryPath = _cacheDirectory.path;
-    if (directoryPath == null) return "";
+    String directoryPath = _cacheDirectory.path;
 
     String targetFolderPath = '$directoryPath/GrowthBook-Cache';
 
@@ -68,11 +70,7 @@ class CachingManager {
   }
 
   void clearCache() {
-    String? directoryPath = _cacheDirectory.path;
-    if (directoryPath == null) {
-      print('Failed to retrieve directory path.');
-      return;
-    }
+    String directoryPath = _cacheDirectory.path;
 
     String targetFolderPath = '$directoryPath/GrowthBook-Cache';
     Directory targetFolder = Directory(targetFolderPath);
@@ -81,10 +79,10 @@ class CachingManager {
       try {
         targetFolder.deleteSync(recursive: true);
       } catch (e) {
-        print('Failed to clear cache: $e');
+        log('Failed to clear cache: $e');
       }
     } else {
-      print('Cache directory does not exist. Nothing to clear.');
+      log('Cache directory does not exist. Nothing to clear.');
     }
   }
 }
