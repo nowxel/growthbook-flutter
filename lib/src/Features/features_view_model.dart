@@ -84,7 +84,7 @@ class FeatureViewModel {
           break;
 
         default:
-          final features = jsonPetitions["features"];
+          final features = jsonPetitions!["features"];
           final hasFeaturesKey = jsonPetitions.containsKey("features");
 
           hasFeaturesKey
@@ -100,7 +100,7 @@ class FeatureViewModel {
 
   void handleValidFeatures(dynamic features) {
     switch (features) {
-      case const (Map<String, GBFeature>):
+      case Map<String, GBFeature>:
         delegate.featuresFetchedSuccessfully(features);
 
         final featureData = utf8.encode(jsonEncode(features));
