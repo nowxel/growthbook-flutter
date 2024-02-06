@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:qioqioqr/qioqioqr.dart';
-import 'package:tuple/tuple.dart';
 
 /// Feature Evaluator Class
 /// Takes Context and Feature Key
