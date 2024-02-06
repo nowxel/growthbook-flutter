@@ -25,7 +25,7 @@ jobs:
       - name: Check Publish Warnings
         run: dart pub publish --dry-run
       - name: Publish
-        uses: dart pub publish --force
+        run: dart pub publish --force
         # with:
         #   accessToken: ${{ secrets.TOKEN }}
         #   refreshToken: ${{ secrets.TOKEN }}
