@@ -99,6 +99,7 @@ class GrowthBookSDK extends FeaturesFlowDelegate {
   Future<void> refresh() async {
     final featureViewModel = FeatureViewModel(
       delegate: this,
+      backgroundSync: _context.backgroundSync,
       source: FeatureDataSource(
         client: _baseClient,
         context: _context,
